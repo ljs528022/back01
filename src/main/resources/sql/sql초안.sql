@@ -553,8 +553,6 @@ create type news_category_type as enum (
 'etc'           -- 기타
 );
 
-drop table tbl_news;
-
 create table tbl_news (
 id            bigint             generated always as identity primary key,  -- pk | 뉴스 고유 id (자동 증가)
 admin_id      bigint,  -- fk → tbl_member.id | 뉴스 등록 관리자 (탈퇴 시 null)
