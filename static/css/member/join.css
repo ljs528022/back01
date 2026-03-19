@@ -1,0 +1,291 @@
+﻿:root {
+    --text: #0f1419;
+    --sub: #536471;
+    --line: #cfd9de;
+    --bg: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    background: var(--bg);
+    font-family: "TwitterChirp", "Pretendard Variable", "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.join-page {
+    width: 100%;
+    margin: 0;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 0;
+    padding: 0 36px;
+}
+
+.join-hero {
+    grid-column: 1 / 3;
+    grid-row: 1 / 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+}
+
+.join-logo {
+    width: min(516px, 53%);
+    color: var(--text);
+    fill: currentColor;
+}
+
+.join-panel {
+    grid-column: 3 / 5;
+    grid-row: 2 / 5;
+    align-self: stretch;
+    width: min(620px, 100%);
+    justify-self: start;
+    margin-left: 52px;
+    padding-top: 0;
+}
+
+.join-title {
+    margin: -10px 0 0;
+    font-size: clamp(59px, 4.75vw, 86px);
+    line-height: 1.03;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.join-subtitle {
+    margin: 54px 0 22px;
+    font-size: clamp(42px, 3.15vw, 53px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+}
+
+.join-actions {
+    width: min(420px, 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+.chip-btn {
+    border-radius: 9999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    min-height: 52px;
+    padding: 0 16px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.chip-google {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+}
+
+.chip-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chip-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ff7a00;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+}
+
+.chip-user-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+}
+
+.chip-name {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.chip-email {
+    font-size: 13px;
+    color: #5f7383;
+    font-weight: 400;
+}
+
+.google-g {
+    color: #4285f4;
+    font-size: 30px;
+    line-height: 1;
+    font-weight: 700;
+}
+
+.chip-apple {
+    margin-top: 12px;
+}
+
+.apple-mark {
+    font-size: 21px;
+    margin-right: 6px;
+}
+
+.join-or {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.line {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+.or-text {
+    font-size: 18px;
+}
+
+.primary-btn,
+.secondary-btn {
+    width: 100%;
+    min-height: 52px;
+    border-radius: 9999px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+}
+
+.primary-btn {
+    background: #07121f;
+    color: #fff;
+    font-weight: 700;
+}
+
+.join-terms {
+    margin: 12px 0 0;
+    color: var(--sub);
+    font-size: 12px;
+    line-height: 1.34;
+}
+
+.login-block {
+    margin-top: 46px;
+}
+
+.login-title {
+    margin: 0 0 12px;
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.secondary-btn {
+    border: 1px solid var(--line);
+    color: var(--text);
+    background: #fff;
+    font-weight: 400;
+}
+
+.join-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    width: 100%;
+    margin: 0;
+    padding: 0 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #5f7383;
+}
+
+@media (max-width: 1220px) {
+    .join-page {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: 22px;
+        justify-items: center;
+        padding-top: 18px;
+    }
+
+    .join-hero {
+        min-height: 240px;
+    }
+
+    .join-logo {
+        width: min(260px, 45vw);
+    }
+
+    .join-panel {
+        width: min(560px, 100%);
+        margin-left: 0;
+    }
+
+    .join-title {
+    margin: -10px 0 0;
+    font-size: clamp(59px, 4.75vw, 86px);
+    line-height: 1.03;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+    .join-subtitle {
+    margin: 54px 0 22px;
+    font-size: clamp(42px, 3.15vw, 53px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+}
+
+    .login-title {
+    margin: 0 0 12px;
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+    .primary-btn,
+    .secondary-btn {
+        font-size: clamp(24px, 5vw, 34px);
+    }
+}
+
+
+
+
+
+
