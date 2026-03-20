@@ -1,12 +1,16 @@
 package com.app.globalgates.service;
 
 import com.app.globalgates.common.enumeration.FileContentType;
+import com.app.globalgates.common.pagination.Criteria;
+import com.app.globalgates.common.search.AdSearch;
+import com.app.globalgates.dto.AdWithPagingDTO;
 import com.app.globalgates.dto.AdvertisementDTO;
 import com.app.globalgates.dto.FileAdvertisementDTO;
 import com.app.globalgates.dto.FileDTO;
 import com.app.globalgates.repository.AdvertisementDAO;
 import com.app.globalgates.repository.FileAdvertisementDAO;
 import com.app.globalgates.repository.FileDAO;
+import com.app.globalgates.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +55,7 @@ public class AdvertisementService {
             });
         }
 
+        // 광고 정보, 광고 이미지 등록 후 이미지 저장 경로 return
         return path;
     }
 
@@ -59,6 +65,32 @@ public class AdvertisementService {
     }
 
     // 광고 검색 조회
+    public AdWithPagingDTO list(int page, AdSearch search) {
+        AdWithPagingDTO adWithPagingDTO = new AdWithPagingDTO();
+        Criteria criteria = new Criteria(page, advertisementDAO.getTotal(search));
+
+        // 이미지 등록
+        List<AdvertisementDTO> ads = advertisementDAO.findBySearch(criteria, search).stream()
+                .map(adDTO -> {
+                    List<FileAdvertisementDTO> images = new ArrayList<>(fileAdvertisementDAO.findByAdId(adDTO.getId()));
+                    if(!images.isEmpty()) { adDTO.setAdImageList(images); }
+                    return adDTO;
+                }).collect(Collectors.toList());
+
+        criteria.setHasMore(ads.size() > criteria.getRowCount());
+        adWithPagingDTO.setCriteria(criteria);
+
+        if(criteria.isHasMore()) {
+            ads.remove(ads.size() - 1);
+        }
+
+        ads.forEach(adDTO -> {
+            adDTO.setCreatedDatetime(DateUtils.toRelativeTime(adDTO.getCreatedDatetime()));
+        });
+        adWithPagingDTO.setAdvertisements(ads);
+
+        return adWithPagingDTO;
+    }
 
     // 광고 상세 조회
 

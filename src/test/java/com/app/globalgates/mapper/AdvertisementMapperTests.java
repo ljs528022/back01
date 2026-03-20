@@ -1,16 +1,13 @@
 package com.app.globalgates.mapper;
 
+import com.app.globalgates.common.pagination.Criteria;
+import com.app.globalgates.common.search.AdSearch;
 import com.app.globalgates.dto.AdvertisementDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -39,6 +36,18 @@ public class AdvertisementMapperTests {
     public void testSelectAll() {
         List<AdvertisementDTO> foundAds = advertisementMapper.selectAll();
         log.info("받아온 광고들 : {}", foundAds);
+        log.info("받아온 광고 수: {}", foundAds.size());
     }
 
+    @Test
+    public void testSelectWithSearchAndFilter() {
+        AdSearch search = new AdSearch();
+        search.setMemberId(1L);
+
+        Criteria criteria = new Criteria(1, advertisementMapper.selectTotal(search));
+
+        List<AdvertisementDTO> foundAds = advertisementMapper.selectBySearch(criteria, search);
+        log.info("검색된 광고 : {}", foundAds);
+        log.info("검색된 모든 광고 수: {}", advertisementMapper.selectTotal(search));
+    }
 }

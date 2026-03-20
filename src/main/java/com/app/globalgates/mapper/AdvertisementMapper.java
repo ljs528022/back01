@@ -1,7 +1,10 @@
 package com.app.globalgates.mapper;
 
+import com.app.globalgates.common.pagination.Criteria;
+import com.app.globalgates.common.search.AdSearch;
 import com.app.globalgates.dto.AdvertisementDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,7 +17,10 @@ public interface AdvertisementMapper {
     public List<AdvertisementDTO> selectAll();
 
     // 광고 검색 조회
+    public List<AdvertisementDTO> selectBySearch(@Param("criteria") Criteria criteria, @Param("search") AdSearch search);
 
+    // 광고 전체 개수
+    public int selectTotal(@Param("search") AdSearch search);
 
     // 광고 상세 조회
 }

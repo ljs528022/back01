@@ -1,12 +1,16 @@
 package com.app.globalgates.service;
 
 import com.app.globalgates.common.enumeration.FileContentType;
+import com.app.globalgates.common.pagination.Criteria;
+import com.app.globalgates.common.search.AdSearch;
+import com.app.globalgates.dto.AdWithPagingDTO;
 import com.app.globalgates.dto.AdvertisementDTO;
 import com.app.globalgates.dto.FileAdvertisementDTO;
 import com.app.globalgates.dto.FileDTO;
 import com.app.globalgates.repository.AdvertisementDAO;
 import com.app.globalgates.repository.FileAdvertisementDAO;
 import com.app.globalgates.repository.FileDAO;
+import com.app.globalgates.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @Slf4j
@@ -60,6 +66,37 @@ public class AdvertisementServiceTest {
     public void testGetAllAds() {
         List<AdvertisementDTO> foundAds = advertisementDAO.findAll();
         log.info("찾아온 광고들 : {}", foundAds);
+    }
+
+    @Test
+    public void testList() {
+        AdSearch search = new AdSearch();
+        search.setMemberId(1L);
+        Criteria criteria = new Criteria(1, advertisementDAO.getTotal(search));
+
+        AdWithPagingDTO adWithPagingDTO = new AdWithPagingDTO();
+
+        // 이미지 등록
+        List<AdvertisementDTO> ads = advertisementDAO.findBySearch(criteria, search).stream()
+                .map(adDTO -> {
+                    List<FileAdvertisementDTO> images = new ArrayList<>(fileAdvertisementDAO.findByAdId(adDTO.getId()));
+                    if(!images.isEmpty()) { adDTO.setAdImageList(images); }
+                    return adDTO;
+                }).collect(Collectors.toList());
+
+        criteria.setHasMore(ads.size() > criteria.getRowCount());
+        adWithPagingDTO.setCriteria(criteria);
+
+        if(criteria.isHasMore()) {
+            ads.remove(ads.size() - 1);
+        }
+
+        ads.forEach(adDTO -> {
+            adDTO.setCreatedDatetime(DateUtils.toRelativeTime(adDTO.getCreatedDatetime()));
+        });
+        adWithPagingDTO.setAdvertisements(ads);
+
+        log.info("받아온 광고들 : {}", adWithPagingDTO.getAdvertisements());
     }
 
 

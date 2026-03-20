@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.app.globalgates.mapper.AdvertisementMapper">
+    <sql id="search">
+        advertiser_id = #{search.memberId}
+        <if test="search.keyword != null and search.keyword != ''.toString()">
+            AND (
+                headline ILIKE '%' || #{search.keyword} || '%'
+                OR (
+                title ILIKE '%' || #{search.keyword} || '%'
+                AND NOT (headline ILIKE '%' || #{search.keyword} || '%')
+                )
+            )
+        </if>
+        <choose>
+            <when test="search.filter == 'active'.toString()">
+                AND status = 'active'
+            </when>
+            <when test="search.filter == 'reported'.toString()">
+                AND status = 'reported'
+            </when>
+        </choose>
+    </sql>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into tbl_advertisement (advertiser_id, title, headline, description, landing_url, budget,
                                        impression_estimate, started_at)
@@ -23,5 +44,27 @@
                created_datetime,
                updated_datetime
         from tbl_advertisement
+    </select>
+
+    <select id="selectBySearch">
+        select
+            distinct
+            id, advertiser_id, title, headline, description, landing_url,
+            budget, impression_estimate, receipt_id,
+            status, started_at, created_datetime, updated_datetime
+        from tbl_advertisement
+        <where>
+            <include refid="search"></include>
+        </where>
+        order by created_datetime desc
+        limit #{criteria.count} offset #{criteria.offset}
+    </select>
+
+    <select id="selectTotal">
+        select count(*)
+        from tbl_advertisement
+        <where>
+            <include refid="search"></include>
+        </where>
     </select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.app.globalgates.repository;
 
+import com.app.globalgates.common.pagination.Criteria;
+import com.app.globalgates.common.search.AdSearch;
 import com.app.globalgates.dto.AdvertisementDTO;
 import com.app.globalgates.mapper.AdvertisementMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,14 @@ public class AdvertisementDAO {
     }
 
     // 광고 검색 조회
+    public List<AdvertisementDTO> findBySearch(Criteria criteria, AdSearch search) {
+        return advertisementMapper.selectBySearch(criteria, search);
+    }
+
+    // 검색된 광고 개수
+    public int getTotal(AdSearch search) {
+        return advertisementMapper.selectTotal(search);
+    }
 
     // 광고 상세 조회
 }
