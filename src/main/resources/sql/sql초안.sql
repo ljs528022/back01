@@ -197,7 +197,7 @@ constraint fk_post_reply_post foreign key(reply_post_id)
 references tbl_post(id)
 );
 
-
+select * from tbl_post_product;
 -- [13] tbl_post_product -- 게시물 (상품)
 alter table tbl_post_product
 add column product_category_id bigint not null;

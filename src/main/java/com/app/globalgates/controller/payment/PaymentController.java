@@ -4,14 +4,13 @@ import com.app.globalgates.common.enumeration.PaymentStatus;
 import com.app.globalgates.dto.PaymentAdvertisementDTO;
 import com.app.globalgates.service.AdvertisementService;
 import com.app.globalgates.service.PaymentAdvertisementService;
-import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@lombok.extern.slf4j.Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/payment")
