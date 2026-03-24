@@ -146,6 +146,22 @@ public class AdvertisementService {
         return adDTO;
     }
 
+    // 피드용 광고목록
+    public List<AdvertisementDTO> getAdsInMain() {
+        return advertisementDAO.findAll().stream()
+                .map(adDTO -> {
+                    List<FileAdvertisementDTO> images = fileAdvertisementDAO.findByAdId(adDTO.getId());
+                    if (!images.isEmpty()) {
+                        adDTO.setAdImageList(
+                                images.stream()
+                                        .map(FileAdvertisementDTO::getFilePath)
+                                        .collect(Collectors.toList())
+                        );
+                    }
+                    return adDTO;
+                }).collect(Collectors.toList());
+    }
+
     // 오늘자 경로 생성
     public String getTodayPath(){
         return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));

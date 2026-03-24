@@ -35,8 +35,7 @@ public class MainAPIController {
     @GetMapping("/ads")
     public List<AdvertisementDTO> getAds() {
         log.info("광고 목록 조회 (피드 삽입용)");
-        AdWithPagingDTO result = advertisementService.list(1, new com.app.globalgates.common.search.AdSearch());
-        List<AdvertisementDTO> ads = result.getAdvertisements();
+        List<AdvertisementDTO> ads = advertisementService.getAdsInMain();
         ads.forEach(ad -> ad.setAdImageList(convertToPresignedUrl(ad.getAdImageList())));
         return ads;
     }
