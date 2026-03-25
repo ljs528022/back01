@@ -27,47 +27,49 @@
             <h2 class="join-subtitle">지금 가입하세요.</h2>
 
             <div class="join-actions">
-                <button type="button" class="chip-btn naver-login">
-                    <img src="/images/NAVER_login_KR/NAVER_login_Light_KR_green_center_H56.png" alt="" class="chip-btn-img apple-mark">
-                </button>
-                <button type="button" class="chip-btn kakao-login">
-                    <img src="/images/kakao_login/ko/kakao_login_medium_wide.png" alt="" class="chip-btn-img apple-mark">
-                </button>
-                <button type="button" id="facebook-login" class="chip-btn facebook-login">
-                    <div id="spinner"
-                         style="
-                                background: #4267b2;
-                                border-radius: 5px;
-                                color: white;
-                                height: 80px;
-                                text-align: center;
-                                width: 420px;">
-                        facebook으로 로그인하기
-                        <div
-                                class="fb-login-button"
-                                data-max-rows="1"
-                                data-size="large"
-                                data-button-type="continue_with"
-                                data-use-continue-as="true"
-                        ></div>
-                    </div>
-                </button>
-                <button type="button" id="google-login" class="chip-btn chip-btn-img apple-mark google-login">
-                    <div id="g_id_onload"
-                         data-client_id="YOUR_GOOGLE_CLIENT_ID"
-                         data-login_uri="https://your.domain/your_login_endpoint"
-                         data-auto_prompt="false">
-                    </div>
-                    <div class="g_id_signin"
-                         data-type="standard"
-                         data-size="large"
-                         data-theme="outline"
-                         data-text="sign_in_with"
-                         data-shape="pill"
-                         data-width="420"
-                         data-logo_alignment="left">
-                    </div>
-                </button>
+                <div class="join-social-grid">
+                    <button type="button" class="chip-btn naver-login">
+                        <img src="/images/NAVER_login_KR/NAVER_login_Light_KR_green_center_H56.png" alt="" class="chip-btn-img apple-mark">
+                    </button>
+                    <button type="button" class="chip-btn kakao-login">
+                        <img src="/images/kakao_login/ko/kakao_login_medium_wide.png" alt="" class="chip-btn-img apple-mark">
+                    </button>
+                    <button type="button" id="facebook-login" class="chip-btn facebook-login">
+                        <div id="spinner"
+                             style="
+                                    background: #4267b2;
+                                    border-radius: 5px;
+                                    color: white;
+                                    height: 80px;
+                                    text-align: center;
+                                    width: 420px;">
+                            facebook으로 로그인하기
+                            <div
+                                    class="fb-login-button"
+                                    data-max-rows="1"
+                                    data-size="large"
+                                    data-button-type="continue_with"
+                                    data-use-continue-as="true"
+                            ></div>
+                        </div>
+                    </button>
+                    <button type="button" id="google-login" class="chip-btn chip-btn-img apple-mark google-login">
+                        <div id="g_id_onload"
+                             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                             data-login_uri="https://your.domain/your_login_endpoint"
+                             data-auto_prompt="false">
+                        </div>
+                        <div class="g_id_signin"
+                             data-type="standard"
+                             data-size="large"
+                             data-theme="outline"
+                             data-text="sign_in_with"
+                             data-shape="pill"
+                             data-width="420"
+                             data-logo_alignment="left">
+                        </div>
+                    </button>
+                </div>
 
                 <div class="join-or" aria-hidden="true">
                     <span class="line"></span>
@@ -1227,14 +1229,8 @@
                 </svg>
             </button>
 
-            <div class="login-logo" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                    <path d="M21.742 21.75l-7.563-11.179 7.056-8.321h-2.456l-5.691 6.714-4.54-6.714H2.359l7.29 10.776L2.25 21.75h2.456l6.035-7.118 4.818 7.118h6.191-.008zM7.739 3.818L18.81 20.182h-2.447L5.29 3.818h2.447z"></path>
-                </svg>
-            </div>
-
             <div class="login-inner">
-                <h1 id="loginModalTitle" class="login-title">X 로그인하기</h1>
+                <h1 id="loginModalTitle" class="login-title">GlobalGates 로그인하기</h1>
 
                 <div class="login-social-list">
                     <button  type="button" class="login-social-btn login-social-btn--image naver-login">
