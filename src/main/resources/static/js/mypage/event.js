@@ -1959,6 +1959,14 @@ window.onload = function () {
     renderDraftPanel();
     ensureReplyEmojiLibraryPicker();
 
+    // 내 상품 탭은 다른 페이지의 피드/전문가 목록처럼
+    // page, hasMore, checkScroll 상태를 따로 들고 가며 무한 스크롤을 처리한다.
+    let activeProfileTab = "Posts";
+    let myProductPage = 1;
+    let myProductCheckScroll = true;
+    let myProductHasMore = true;
+    let myProductLoaded = false;
+
     // 네비게이션 탭 (마이페이지)
     const navBarDivs = document.querySelectorAll(".Profile-Tab-Item");
     const navBarTexts = document.querySelectorAll(".Profile-Tab-Text");
@@ -1972,9 +1980,56 @@ window.onload = function () {
             navBarTexts[i].classList.add("selected");
             navUnderlines[i].classList.remove("off");
             contentDivs[i].classList.remove("off");
+
+            if (nav.classList.contains("Posts")) {
+                activeProfileTab = "Posts";
+            }
+
+            if (nav.classList.contains("Replies")) {
+                activeProfileTab = "Replies";
+            }
+
+            if (nav.classList.contains("MyProducts")) {
+                activeProfileTab = "MyProducts";
+
+                // 첫 진입 시에만 1페이지를 로드한다.
+                // 이후에는 스크롤로 다음 페이지를 이어서 불러온다.
+                if (!myProductLoaded) {
+                    service.getMyProducts(myProductPage, (data) => {
+                        layout.showMyProductList(data, myProductPage);
+                        myProductHasMore = data.criteria.hasMore;
+                    });
+                    myProductLoaded = true;
+                }
+            }
+
+            if (nav.classList.contains("Likes")) {
+                activeProfileTab = "Likes";
+            }
         });
     });
     document.querySelector(".Profile-Tab-Item.Posts")?.click();
+
+    // 기존 main/event.js의 스크롤 페이징 구조와 같은 방식이다.
+    // 현재 활성 탭이 내 상품이고, 다음 페이지가 남아 있을 때만 추가 로드한다.
+    window.addEventListener("scroll", (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        if (scrollTop + clientHeight < scrollHeight - 100) return;
+
+        if (activeProfileTab === "MyProducts" && myProductCheckScroll && myProductHasMore) {
+            myProductCheckScroll = false;
+            myProductPage++;
+
+            service.getMyProducts(myProductPage, (data) => {
+                layout.showMyProductList(data, myProductPage);
+                myProductHasMore = data.criteria.hasMore;
+            });
+
+            setTimeout(() => {
+                myProductCheckScroll = true;
+            }, 1000);
+        }
+    });
 
     // [마이페이지 전용] 답글 버튼: .Post-Action-Btn.Reply 클릭 → openReplyModal
     document.querySelectorAll(".Post-Action-Btn.Reply").forEach((button) => {
@@ -2883,24 +2938,248 @@ window.onload = function () {
 
     // 내 상품 등록 모달
     const productWriteModal = document.querySelector(".Product-Write-Modal");
+    const productWriteForm = document.querySelector(".Product-Write-Form");
+    const productSubmitButton = document.querySelector(
+        ".Input-Footer-Button.submit",
+    );
+    const productCancelButton = document.querySelector(
+        ".Input-Footer-Button.cancel",
+    );
+    const productCloseButton = document.querySelector(
+        ".Product-Write-Modal .Modal-Close-Button",
+    );
+    const productNameInput = document.querySelector("input[name='postName']");
+    const productPriceInput = document.querySelector("input[name='postPrice']");
+    const productStockInput = document.querySelector("input[name='postStock']");
+    const productContentInput = document.querySelector(
+        "textarea[name='postContent']",
+    );
+    const productImageInput = document.getElementById("productImageInput");
+    const productImageHidden = document.getElementById("productImageHidden");
+    const productImageUploadArea = document.querySelector(
+        ".Product-Image-Upload-Area",
+    );
+    const productImagePlaceholder = document.querySelector(
+        ".Product-Image-Upload-Placeholder",
+    );
+    const productImagePreviewGrid = document.querySelector(
+        ".Product-Image-Preview-Grid",
+    );
+    const productImageResetButton = document.querySelector(
+        ".Product-Image-Reset-Btn",
+    );
+    let productPreviewUrls = [];
+    let productSubmitting = false;
+
+    function clearProductPreviewUrls() {
+        if (!productPreviewUrls.length) return;
+        productPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+        productPreviewUrls = [];
+    }
+
+    function syncProductImageHiddenInput(files) {
+        if (!productImageHidden) return;
+        productImageHidden.value = files.map((file) => file.name).join(",");
+    }
+
+    function renderProductImagePreview() {
+        if (!productImagePreviewGrid || !productImageInput) return;
+
+        const files = Array.from(productImageInput.files || []).slice(0, 4);
+
+        clearProductPreviewUrls();
+        syncProductImageHiddenInput(files);
+
+        if (!files.length) {
+            productImagePreviewGrid.innerHTML = "";
+            productImagePreviewGrid.classList.add("off");
+            productImagePlaceholder?.classList.remove("off");
+            productImageResetButton?.classList.add("off");
+            if (productImageResetButton) productImageResetButton.disabled = true;
+            return;
+        }
+
+        productPreviewUrls = files.map((file) => URL.createObjectURL(file));
+        productImagePreviewGrid.classList.remove("off");
+        productImagePlaceholder?.classList.add("off");
+        productImageResetButton?.classList.remove("off");
+        if (productImageResetButton) productImageResetButton.disabled = false;
+
+        productImagePreviewGrid.innerHTML = `
+            <div class="Product-Img-Grid" data-count="${files.length}">
+                ${productPreviewUrls
+                    .map(
+                        (url, index) => `
+                            <div class="Product-Img-Item">
+                                <img src="${url}" alt="상품 이미지 미리보기 ${index + 1}">
+                                <button type="button" class="Product-Image-Remove-Btn" data-image-index="${index}">✕</button>
+                            </div>
+                        `,
+                    )
+                    .join("")}
+            </div>
+        `;
+    }
+
+    function resetProductImages() {
+        clearProductPreviewUrls();
+        if (productImageInput) {
+            productImageInput.value = "";
+        }
+        syncProductImageHiddenInput([]);
+        if (productImagePreviewGrid) {
+            productImagePreviewGrid.innerHTML = "";
+            productImagePreviewGrid.classList.add("off");
+        }
+        productImagePlaceholder?.classList.remove("off");
+        productImageResetButton?.classList.add("off");
+        if (productImageResetButton) productImageResetButton.disabled = true;
+    }
+
+    function resetProductForm() {
+        productWriteForm?.reset();
+        selectedTags = [];
+        renderTags();
+        showTopChips();
+        resetProductImages();
+    }
+
+    function getSelectedCategoryName() {
+        const selectedCategory = categoryScroll?.querySelector(
+            ".Cat-Chip--Sub-Active, .Cat-Chip--Active",
+        );
+        return selectedCategory?.dataset.cat || "";
+    }
+
     document
         .querySelector(".Content-Header-Button")
         ?.addEventListener("click", () => openModal(productWriteModal));
-    document
-        .querySelector(".Product-Write-Modal .Modal-Close-Button")
-        ?.addEventListener("click", () => closeModal(productWriteModal));
-    document
-        .querySelector(".Input-Footer-Button.cancel")
-        ?.addEventListener("click", (e) => {
+    productCloseButton?.addEventListener("click", () => {
+        resetProductForm();
+        closeModal(productWriteModal);
+    });
+    productCancelButton?.addEventListener("click", (e) => {
             e.preventDefault();
+            resetProductForm();
             closeModal(productWriteModal);
         });
-    document
-        .querySelector(".Input-Footer-Button.submit")
-        ?.addEventListener("click", (e) => {
-            e.preventDefault();
-            closeModal(productWriteModal);
+    productImageUploadArea?.addEventListener("click", (e) => {
+        if (e.target.closest("[data-image-index]")) {
+            return;
+        }
+        productImageInput?.click();
+    });
+    productImageInput?.addEventListener("change", renderProductImagePreview);
+    productImageResetButton?.addEventListener("click", resetProductImages);
+    productImagePreviewGrid?.addEventListener("click", (e) => {
+        const removeButton = e.target.closest("[data-image-index]");
+        if (!removeButton || !productImageInput?.files?.length) return;
+        e.stopPropagation();
+
+        const removeIndex = Number(removeButton.dataset.imageIndex);
+        const dataTransfer = new DataTransfer();
+
+        Array.from(productImageInput.files)
+            .filter((_, index) => index !== removeIndex)
+            .forEach((file) => dataTransfer.items.add(file));
+
+        productImageInput.files = dataTransfer.files;
+        renderProductImagePreview();
+    });
+    productSubmitButton?.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const postTitle = productNameInput?.value.trim() || "";
+        const productPrice = productPriceInput?.value.trim() || "";
+        const productStock = productStockInput?.value.trim() || "";
+        const postContent = productContentInput?.value.trim() || "";
+        const postTag = postTagsInput?.value.trim() || "";
+        const categoryName = getSelectedCategoryName();
+
+        if (productSubmitting) {
+            return;
+        }
+
+        if (!postTitle) {
+            alert("상품 이름을 입력해주세요.");
+            productNameInput?.focus();
+            return;
+        }
+
+        if (!productPrice || !/^\d+$/.test(productPrice)) {
+            alert("상품 가격을 숫자로 입력해주세요.");
+            productPriceInput?.focus();
+            return;
+        }
+
+        if (!productStock || !/^\d+$/.test(productStock)) {
+            alert("상품 수량을 숫자로 입력해주세요.");
+            productStockInput?.focus();
+            return;
+        }
+
+        if (!postContent) {
+            alert("상품 설명을 입력해주세요.");
+            productContentInput?.focus();
+            return;
+        }
+
+        if (!categoryName) {
+            alert("상품 카테고리를 선택해주세요.");
+            return;
+        }
+
+        console.log("받아온 상품정보", {
+            postTitle,
+            productPrice,
+            productStock,
+            postContent,
+            postTag,
+            categoryName,
         });
+
+        const formData = new FormData();
+        formData.append("postTitle", postTitle);
+        formData.append("productPrice", productPrice);
+        formData.append("productStock", productStock);
+        formData.append("postContent", postContent);
+        formData.append("categoryName", categoryName);
+
+        if (postTag) {
+            formData.append("postTag", postTag);
+        }
+
+        Array.from(productImageInput?.files || []).forEach((file) => {
+            formData.append("images", file);
+        });
+
+        try {
+            productSubmitting = true;
+            productSubmitButton.disabled = true;
+
+            const result = await service.writeProduct(formData);
+
+            alert(result.message || "상품 등록 성공");
+            resetProductForm();
+            closeModal(productWriteModal);
+
+            // 상품 등록이 성공하면 내 상품 목록은 첫 페이지부터 다시 그려야 한다.
+            // 이렇게 해야 새로 등록한 상품이 가장 위에 보이고, 기존 무한 스크롤 상태도 초기화된다.
+            myProductPage = 1;
+            myProductHasMore = true;
+            myProductLoaded = true;
+
+            service.getMyProducts(myProductPage, (data) => {
+                layout.showMyProductList(data, myProductPage);
+                myProductHasMore = data.criteria.hasMore;
+            });
+        } catch (error) {
+            alert(error.message || "상품 등록 중 오류가 발생했습니다.");
+        } finally {
+            productSubmitting = false;
+            productSubmitButton.disabled = false;
+        }
+    });
 
     // [FIX 7] 상품 수량 숫자만
     const stockInput = document.querySelector(".Product-Stock-Input");
