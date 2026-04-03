@@ -1,5 +1,5 @@
 ﻿window.onload = () => {
-// 蹂??
+
 
     const portals = document.querySelectorAll(".each-menu");
     const pages = document.querySelectorAll(".page");
@@ -352,7 +352,6 @@
     };
 
 
-    // 寃뚯떆臾?泥⑤??뚯씪 ?붾??곗씠??(?대?吏 理쒕?4 / ?곸긽 理쒕?1 / ?놁쓬)
     const postDummyAttach = [
         {
             type: "image",
@@ -369,15 +368,13 @@
         {type: "image", srcs: ["../../static/images/admin/file-ex.PNG", "../../static/images/admin/file-ex.PNG"]},
     ];
 
-    // ?댁뒪 ?붾??곗씠??
     const aiNews = {
-        title: "[?띾낫] 肄붿뒪??8% ??씫??嫄곕옒??留뚯뿉 ?쒗궥釉뚮젅?댁빱 諛쒕룞",
-        summary: "?좉?利앷텒?쒖옣???쒗궥釉뚮젅?댁빱媛 諛쒕룞?먮떎怨?怨듭떆?덈떎. ?뱀떆 肄붿뒪??吏?섎뒗 ??嫄곕옒?쇰낫??8.1% ?섎씫??5132.07?댁뿀???대? ?ы깭 ?κ린??媛?μ꽦??遺媛곷릺硫댁꽌 ?뱁엳 諛섎룄泥댁＜媛 湲됰씫 以묒씠?? ?좉? ?곸듅? ?щ윭 ?섏슂瑜??섎━???섑럹?몃줈?щ윭???④낵瑜??듯빐 ?먰솕媛??섎씫(?섏쑉 ?곸듅) ?뺣젰?쇰줈 ?댁뼱吏????덈떎. ?대궇 ?먃룸떖???섏쑉? 湲됰벑?섎ŉ 1500???좎쓣 ?꾪삊?섍퀬 ?덈떎. ?ㅼ쟾 10??45遺??꾩옱 ?щ윭??????먰솕媛移섎뒗 ??嫄곕옒?쇰낫??12??0.81%) ?대┛(?섏쑉 ?곸듅) 1497.00?먯쓣 ?섑??닿퀬 ?덈떎.",
+        title: "[속보] 코스피 8% 급락, 무역 시장 변동성 확대",
+        summary: "글로벌 시장 불확실성이 커지면서 수출입 관련 업종 전반에 변동성이 확대되고 있습니다. 원자재 가격과 환율 변동도 함께 나타나 기업들의 대응이 필요한 상황입니다.",
         source: "JoongAng News"
     };
 
 
-    // 1. ?ъ씠?쒕컮 硫붾돱 ?뚮??꾨븣 ???꾪솚
     portals.forEach((portal, i) => {
         portal.addEventListener("click", (e) => {
 
@@ -395,7 +392,6 @@
     });
 
 
-    // 2. ?댁뒪 紐⑸줉?먯꽌 ?댁뒪 ?깅줉 踰꾪듉 ?뚮??꾨븣 (portals[3] = ?댁뒪 ?깅줉)
     newsWriteBtn.addEventListener("click", (e) => {
 
         pages.forEach((page) => {
@@ -411,7 +407,6 @@
     });
 
 
-    // 3. ?댁뒪 ?깅줉 痍⑥냼 ?뚮??꾨븣 (portals[2] = ?댁뒪 紐⑸줉??)
     newsCancelBtn.addEventListener("click", (e) => {
 
         pages.forEach((page) => {
@@ -427,47 +422,42 @@
     });
 
 
-    // 4. ?댁뒪 ?꾩껜?좏깮 泥댄겕諛뺤뒪
     document.querySelector("#newsCheckAll").addEventListener("change", (e) => {
         newsTbody.querySelectorAll("input[type='checkbox']").forEach((cb) => {
             cb.checked = e.target.checked;
         });
     });
 
-    // 4-1. ?댁뒪 鍮꾪솢?깊솕 踰꾪듉
     newsHideBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(newsTbody);
         if (!checked.length) {
-            alert("?좏깮???댁뒪媛 ?놁뒿?덈떎.");
+            alert("선택된 뉴스가 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??댁뒪瑜??④린?쒓쿋?듬땲源?`)) return;
+        if (!confirm(`선택한 ${checked.length}개의 뉴스를 숨기시겠습니까?`)) return;
         checked.forEach(tr => tr.classList.add("row-hidden"));
     });
 
-    // 4-2. ?댁뒪 蹂댁씠湲?踰꾪듉
     newsShowBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(newsTbody);
         if (!checked.length) {
-            alert("?좏깮???댁뒪媛 ?놁뒿?덈떎.");
+            alert("선택된 뉴스가 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??댁뒪瑜??ㅼ떆 ?쒖떆?섏떆寃좎뒿?덇퉴?`)) return;
+        if (!confirm(`선택한 ${checked.length}개의 뉴스를 다시 표시하시겠습니까?`)) return;
         checked.forEach(tr => tr.classList.remove("row-hidden"));
     });
 
-    // 4-3. ?댁뒪 ??젣 踰꾪듉
     newsDeleteBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(newsTbody);
         if (!checked.length) {
-            alert("?좏깮???댁뒪媛 ?놁뒿?덈떎.");
+            alert("선택된 뉴스가 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??댁뒪瑜???젣?섏떆寃좎뒿?덇퉴?`)) return;
+        if (!confirm(`선택한 ${checked.length}개의 뉴스를 삭제하시겠습니까?`)) return;
         checked.forEach(tr => tr.remove());
     });
 
-    // 4-4. ?댁뒪 移댄뀒怨좊━ ?꾪꽣
     const applyNewsFilter = () => {
         const categoryVal = filterNewsCategory.value;
         newsTbody.querySelectorAll(".div-tr").forEach((tr) => {
@@ -482,8 +472,6 @@
     };
     filterNewsCategory.addEventListener("change", applyNewsFilter);
 
-    // 4-5. ?댁뒪 ???대┃ ???섏젙 紐⑤떖 ?닿린
-    // 而щ읆: ?좏깮(0)-踰덊샇(1)-異쒖쿂(2)-?쒕ぉ(3)-移댄뀒怨좊━(4)-議고쉶??5)-?묒꽦??6)
     newsTbody.addEventListener("click", (e) => {
         if (e.target.type === "checkbox") return;
 
@@ -507,7 +495,6 @@
         modalNewsDetail.classList.remove("off");
     });
 
-    // 4-3. ?댁뒪 ?섏젙 紐⑤떖 ?リ린
     document.querySelector("#modalNewsClose").addEventListener("click", (e) => {
         modalNewsDetail.classList.add("off");
     });
@@ -522,17 +509,15 @@
         }
     });
 
-    // 4-4. ?댁뒪 ?섏젙 ???
     document.querySelector("#modalNewsSave").addEventListener("click", (e) => {
-        let result = confirm("?섏젙???댁슜????ν븯?쒓쿋?듬땲源?");
+        let result = confirm("수정한 내용을 저장하시겠습니까?");
 
         if (result) {
-            alert("??λ릺?덉뒿?덈떎.");
+            alert("저장되었습니다.");
             modalNewsDetail.classList.add("off");
         }
     });
 
-    // 4-5. ?댁뒪 紐⑤떖 蹂寃쎄컪 ?덉쓣?쒖뿉 ?섏젙 踰꾪듉 ?쒖꽦??
     const checkNewsChanged = () => {
         const changed =
             document.querySelector("#newsDetailTitle").value !== newsOriginal.title ||
@@ -547,7 +532,6 @@
     document.querySelector("#newsDetailContent").addEventListener("input", checkNewsChanged);
 
 
-    // 5. 회원 목록 행 클릭할때 상세 모달 열기
     memberTbody.addEventListener("click", (e) => {
         const tr = e.target.closest(".div-tr");
         if (!tr || tr.classList.contains("empty-row")) return;
@@ -568,7 +552,6 @@
         modalMemberDetail.classList.remove("off");
     });
 
-    // 4-2. ?뚯썝 ?곸꽭 紐⑤떖 ?リ린
     document.querySelector("#modalMemberClose").addEventListener("click", (e) => {
         modalMemberDetail.classList.add("off");
     });
@@ -583,12 +566,11 @@
         }
     });
 
-    // 4-3. ?뚯썝 ?곸꽭 紐⑤떖 ???
     document.querySelector("#modalMemberSave").addEventListener("click", (e) => {
-        let result = confirm("?섏젙???댁슜????ν븯?쒓쿋?듬땲源?");
+        let result = confirm("수정한 내용을 저장하시겠습니까?");
 
         if (result) {
-            alert("??λ릺?덉뒿?덈떎.");
+            alert("저장되었습니다.");
             modalMemberDetail.classList.add("off");
         }
     });
@@ -605,36 +587,33 @@
         }
     });
 
-    // 媛먯텛湲?踰꾪듉
     document.querySelector("#postHideBtn").addEventListener("click", (e) => {
         const checked = getCheckedRows(postTbody);
         if (!checked.length) {
-            alert("?좏깮??寃뚯떆臾쇱씠 ?놁뒿?덈떎.");
+            alert("선택된 게시물이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛?寃뚯떆臾쇱쓣 ?④린?쒓쿋?듬땲源?`)) return;
+        if (!confirm(`선택한 ${checked.length}개의 게시물을 숨기시겠습니까?`)) return;
         checked.forEach(tr => tr.classList.add("row-hidden"));
     });
 
-    // 蹂댁씠湲?踰꾪듉
     document.querySelector("#postShowBtn").addEventListener("click", (e) => {
         const checked = getCheckedRows(postTbody);
         if (!checked.length) {
-            alert("?좏깮??寃뚯떆臾쇱씠 ?놁뒿?덈떎.");
+            alert("선택된 게시물이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛?寃뚯떆臾쇱쓣 ?ㅼ떆 ?쒖떆?섏떆寃좎뒿?덇퉴?`)) return;
+        if (!confirm(`선택한 ${checked.length}개의 게시물을 다시 표시하시겠습니까?`)) return;
         checked.forEach(tr => tr.classList.remove("row-hidden"));
     });
 
-    // ??젣 踰꾪듉
     document.querySelector("#postDeleteBtn").addEventListener("click", (e) => {
         const checked = getCheckedRows(postTbody);
         if (!checked.length) {
-            alert("?좏깮??寃뚯떆臾쇱씠 ?놁뒿?덈떎.");
+            alert("선택된 게시물이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛?寃뚯떆臾쇱쓣 ??젣?섏떆寃좎뒿?덇퉴?`)) return;
+        if (!confirm(`선택한 ${checked.length}개의 게시물을 삭제하시겠습니까?`)) return;
         checked.forEach(tr => tr.remove());
     });
 
@@ -661,15 +640,12 @@
         }
     });
 
-    // 5. 寃뚯떆臾??꾩껜?좏깮 泥댄겕諛뺤뒪
     document.querySelector("#checkAll").addEventListener("change", (e) => {
         postTbody.querySelectorAll("input[type='checkbox']").forEach((cb) => {
             cb.checked = e.target.checked;
         });
     });
 
-    // 5. 寃뚯떆臾????대┃ ???섏젙 紐⑤떖 ?닿린
-    // 5. 게시물 행 클릭 시 수정 모달 열기
     postTbody.addEventListener("click", (e) => {
         if (e.target.type === "checkbox") return;
 
@@ -723,7 +699,6 @@
         modalPostEdit.classList.remove("off");
     });
 
-    // 5-3. 寃뚯떆臾??섏젙 紐⑤떖 ?リ린
     document.querySelector("#modalPostClose").addEventListener("click", (e) => {
         modalPostEdit.classList.add("off");
     });
@@ -738,17 +713,15 @@
         }
     });
 
-    // 5-4. 寃뚯떆臾??섏젙 ???
     document.querySelector("#modalPostSave").addEventListener("click", (e) => {
-        let result = confirm("?섏젙???댁슜????ν븯?쒓쿋?듬땲源?");
+        let result = confirm("수정한 내용을 저장하시겠습니까?");
 
         if (result) {
-            alert("??λ릺?덉뒿?덈떎.");
+            alert("저장되었습니다.");
             modalPostEdit.classList.add("off");
         }
     });
 
-    // 5-5. 寃뚯떆臾?紐⑤떖 蹂寃?媛먯? ???섏젙 踰꾪듉 ?쒖꽦??
     const checkPostChanged = () => {
         const changed =
             document.querySelector("#peType").value !== postOriginal.type ||
@@ -759,11 +732,10 @@
     document.querySelector("#peCategory").addEventListener("change", checkPostChanged);
 
 
-    // 6. AI ?붿빟 踰꾪듉 ?뚮??꾨븣
     aiBtn.addEventListener("click", (e) => {
         const url = document.querySelector("#newsUrl").value.trim();
         if (!url) {
-            alert("?댁뒪 ?먮Ц URL???낅젰?댁＜?몄슂.");
+            alert("뉴스 원문 URL을 입력해주세요.");
             return;
         }
 
@@ -779,23 +751,44 @@
         previewSource.textContent = aiNews.source;
 
         aiBox.classList.add("show");
-        aiBtn.textContent = "AI summary applied";
+        aiBtn.textContent = "AI 요약 적용 완료";
     });
 
 
-    // 7. ?댁뒪 ?깅줉 踰꾪듉 ?뚮??꾨븣
     newsSubmitBtn.addEventListener("click", (e) => {
         const title = document.querySelector("#newsTitle").value.trim();
         const content = document.querySelector("#newsContent").value.trim();
         if (!title || !content) {
-            alert("?쒕ぉ怨??댁슜???낅젰?댁＜?몄슂.");
+            alert("제목과 내용을 입력해주세요.");
             return;
         }
 
-        let result = confirm("?댁뒪瑜??깅줉?섏떆寃좎뒿?덇퉴?");
+        let result = confirm("뉴스를 등록하시겠습니까?");
         if (!result) return;
 
-        alert("?댁뒪媛 ?깅줉?섏뿀?듬땲??");
+        // ═══ [n8n 연동용] 실제 DB 등록 fetch ═══
+        // 백엔드 NewsAPIController POST /api/news 엔드포인트 활성화 후 주석 해제
+        // const category = document.querySelector("#newsCategory").value;
+        // const sourceUrl = document.querySelector("#newsSource").value.trim();
+        //
+        // fetch("/api/news", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({
+        //         newsTitle: title,
+        //         newsContent: content,
+        //         newsSourceUrl: sourceUrl,
+        //         newsCategory: category,
+        //         newsType: "general"   // 속보일 경우 "emergency"
+        //     })
+        // }).then(res => {
+        //     if (!res.ok) throw new Error("등록 실패");
+        //     alert("뉴스가 등록되었습니다.");
+        // }).catch(err => {
+        //     alert("뉴스 등록에 실패했습니다: " + err.message);
+        // });
+
+        alert("뉴스가 등록되었습니다.");
 
         document.querySelector("#newsUrl").value = "";
         document.querySelector("#newsTitle").value = "";
@@ -803,7 +796,7 @@
         document.querySelector("#newsSource").value = "";
         document.querySelector("#aiSummaryPreview").textContent = "";
         document.querySelector("#aiBox").classList.remove("show");
-        aiBtn.textContent = "AI ?붿빟 ?곸슜";
+        aiBtn.textContent = "AI 요약 적용";
 
         pages.forEach((page) => {
             page.classList.remove("active");
@@ -816,47 +809,42 @@
     });
 
 
-    // 8. ?뚯썝 ?좉퀬 ?꾩껜?좏깮
     document.querySelector("#reportMemberCheckAll").addEventListener("change", (e) => {
         reportMemberTbody.querySelectorAll("input[type='checkbox']").forEach((cb) => {
             cb.checked = e.target.checked;
         });
     });
 
-    // 8-1. ?뚯썝 ?좉퀬 泥섎━?꾨즺 踰꾪듉
     reportMemberDoneBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(reportMemberTbody);
         if (!checked.length) {
-            alert("?좏깮????ぉ???놁뒿?덈떎.");
+            alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??좉퀬瑜??뱀씤?섏떆寃좎뒿?덇퉴?`)) return;
-        alert("?뱀씤 泥섎━?섏뿀?듬땲??");
+        if (!confirm(`선택한 ${checked.length}개의 신고를 승인 처리하시겠습니까?`)) return;
+        alert("승인 처리되었습니다.");
     });
 
-    // 8-2. ?뚯썝 ?좉퀬 諛섎젮 踰꾪듉
     reportMemberRejectBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(reportMemberTbody);
         if (!checked.length) {
-            alert("?좏깮????ぉ???놁뒿?덈떎.");
+            alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??좉퀬瑜?諛섎젮?섏떆寃좎뒿?덇퉴?`)) return;
-        alert("諛섎젮 泥섎━?섏뿀?듬땲??");
+        if (!confirm(`선택한 ${checked.length}개의 신고를 반려 처리하시겠습니까?`)) return;
+        alert("반려 처리되었습니다.");
     });
 
-    // 8-3. ?뚯썝 ?좉퀬 ??젣 踰꾪듉
     reportMemberDeleteBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(reportMemberTbody);
         if (!checked.length) {
-            alert("?좏깮????ぉ???놁뒿?덈떎.");
+            alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??좉퀬瑜???젣?섏떆寃좎뒿?덇퉴?`)) return;
+        if (!confirm(`선택한 ${checked.length}개의 신고를 삭제하시겠습니까?`)) return;
         checked.forEach(tr => tr.remove());
     });
 
-    // 8-4. ?뚯썝 ?좉퀬 ?곹깭 ?꾪꽣
     const applyReportMemberFilter = runAdminSearch(loadReportMembers);
     filterReportMember.addEventListener("change", applyReportMemberFilter);
     reportMemberSearchBtn.addEventListener("click", applyReportMemberFilter);
@@ -866,47 +854,42 @@
         }
     });
 
-    // 8-5. 湲 ?좉퀬 ?꾩껜?좏깮
     document.querySelector("#reportPostCheckAll").addEventListener("change", (e) => {
         reportPostTbody.querySelectorAll("input[type='checkbox']").forEach((cb) => {
             cb.checked = e.target.checked;
         });
     });
 
-    // 8-6. 湲 ?좉퀬 泥섎━?꾨즺 踰꾪듉
     reportPostDoneBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(reportPostTbody);
         if (!checked.length) {
-            alert("?좏깮????ぉ???놁뒿?덈떎.");
+            alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??좉퀬瑜??뱀씤?섏떆寃좎뒿?덇퉴?`)) return;
-        alert("?뱀씤 泥섎━?섏뿀?듬땲??");
+        if (!confirm(`선택한 ${checked.length}개의 신고를 승인 처리하시겠습니까?`)) return;
+        alert("승인 처리되었습니다.");
     });
 
-    // 8-7. 湲 ?좉퀬 諛섎젮 踰꾪듉
     reportPostRejectBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(reportPostTbody);
         if (!checked.length) {
-            alert("?좏깮????ぉ???놁뒿?덈떎.");
+            alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??좉퀬瑜?諛섎젮?섏떆寃좎뒿?덇퉴?`)) return;
-        alert("諛섎젮 泥섎━?섏뿀?듬땲??");
+        if (!confirm(`선택한 ${checked.length}개의 신고를 반려 처리하시겠습니까?`)) return;
+        alert("반려 처리되었습니다.");
     });
 
-    // 8-8. 湲 ?좉퀬 ??젣 踰꾪듉
     reportPostDeleteBtn.addEventListener("click", (e) => {
         const checked = getCheckedRows(reportPostTbody);
         if (!checked.length) {
-            alert("?좏깮????ぉ???놁뒿?덈떎.");
+            alert("선택된 항목이 없습니다.");
             return;
         }
-        if (!confirm(`?좏깮??${checked.length}媛??좉퀬瑜???젣?섏떆寃좎뒿?덇퉴?`)) return;
+        if (!confirm(`선택한 ${checked.length}개의 신고를 삭제하시겠습니까?`)) return;
         checked.forEach(tr => tr.remove());
     });
 
-    // 8-9. 湲 ?좉퀬 ?곹깭 ?꾪꽣
     const applyReportPostFilter = runAdminSearch(loadReportPosts);
     filterReportPost.addEventListener("change", applyReportPostFilter);
     reportPostSearchBtn.addEventListener("click", applyReportPostFilter);
@@ -917,8 +900,6 @@
     });
 
 
-    // 9. ?뚯썝 ?좉퀬 ???대┃ ???곸꽭 紐⑤떖
-    // 而щ읆: ?좏깮(0)-踰덊샇(1)-?좉퀬??2)-?좉퀬???3)-?좉퀬?ъ쑀(4)-?곹깭(5)-?좉퀬??6)
     reportMemberTbody.addEventListener("click", (e) => {
         if (e.target.type === "checkbox") return;
         const tr = e.target.closest(".div-tr");
@@ -939,8 +920,6 @@
         modalReportDetail.classList.remove("off");
     });
 
-    // 9-2. 湲 ?좉퀬 ???대┃ ???곸꽭 紐⑤떖
-    // 而щ읆: ?좏깮(0)-踰덊샇(1)-?좉퀬??2)-?좉퀬湲(3)-?좉퀬?ъ쑀(4)-?곹깭(5)-?좉퀬??6)
     reportPostTbody.addEventListener("click", (e) => {
         if (e.target.type === "checkbox") return;
         const tr = e.target.closest(".div-tr");
@@ -961,7 +940,6 @@
         modalReportDetail.classList.remove("off");
     });
 
-    // 9-3. ?좉퀬 ?ъ궗 紐⑤떖 ?リ린
     document.querySelector("#modalReportClose").addEventListener("click", (e) => {
         modalReportDetail.classList.add("off");
     });
@@ -976,7 +954,6 @@
         }
     });
 
-    // 5-6. 寃뚯떆臾?紐⑤떖 泥⑤??대?吏 ?대┃ ???대?吏 酉곗뼱
     document.querySelector("#postAttachImages").addEventListener("click", (e) => {
         const thumb = e.target.closest(".report-attach-thumb");
         if (!thumb) return;
@@ -984,12 +961,10 @@
         modalImageViewer.classList.remove("off");
     });
 
-    // 5-7. 寃뚯떆臾?紐⑤떖 ?숈쁺???몃꽕???대┃ ???숈쁺??酉곗뼱
     document.querySelector("#postVideoThumb").addEventListener("click", (e) => {
         modalVideoViewer.classList.remove("off");
     });
 
-    // ?숈쁺??酉곗뼱 ?リ린
     document.querySelector("#videoViewerClose").addEventListener("click", (e) => {
         document.querySelector("#videoViewerVideo").pause();
         modalVideoViewer.classList.add("off");
@@ -1002,7 +977,6 @@
         }
     });
 
-    // 9-3-1. 泥⑤? ?대?吏 ?몃꽕???대┃ ???대?吏 酉곗뼱
     document.querySelector("#reportImages").addEventListener("click", (e) => {
         const thumb = e.target.closest(".report-attach-thumb");
         if (!thumb) return;
@@ -1010,7 +984,6 @@
         modalImageViewer.classList.remove("off");
     });
 
-    // ?대?吏 酉곗뼱 ?リ린
     document.querySelector("#imgViewerClose").addEventListener("click", (e) => {
         modalImageViewer.classList.add("off");
     });
@@ -1022,7 +995,6 @@
     });
 
 
-    // 10. ?댁뒪 ?먮룞?깅줉 ?ㅼ젙 紐⑤떖
     newsSettingsBtn.addEventListener("click", (e) => {
         modalNewsAutoSettings.classList.remove("off");
     });
@@ -1047,17 +1019,16 @@
         const hour = document.querySelector("#autoRegHour").value;
         const minute = document.querySelector("#autoRegMinute").value;
         const resultTime = `${ampm} ${hour}:${minute}`;
-        const result = confirm("Save auto news settings?");
+        const result = confirm("자동 뉴스 등록 설정을 저장하시겠습니까?");
         if (!result) return;
-        alert(isOn ? `${resultTime} auto news registration enabled.` : "Auto news registration disabled.");
+        alert(isOn ? `${resultTime} 자동 뉴스 등록이 활성화되었습니다.` : "자동 뉴스 등록이 비활성화되었습니다.");
         modalNewsAutoSettings.classList.add("off");
     });
 
 
-    // 11. ?댁뒪 ?깅줉 誘몃━蹂닿린 珥덇린??諛??ㅼ떆媛??낅뜲?댄듃
 
     document.querySelector("#newsTitle").addEventListener("input", (e) => {
-        previewTitle.textContent = e.target.value || "Enter a title.";
+        previewTitle.textContent = e.target.value || "제목이 여기에 표시됩니다.";
     });
 
     document.querySelector("#newsCategory").addEventListener("change", (e) => {
@@ -1065,11 +1036,11 @@
     });
 
     document.querySelector("#newsContent").addEventListener("input", (e) => {
-        previewContent.textContent = e.target.value || "Enter content to preview it here.";
+        previewContent.textContent = e.target.value || "내용이 여기에 표시됩니다.";
     });
 
     document.querySelector("#newsSource").addEventListener("input", (e) => {
-        previewSource.textContent = e.target.value || "Source";
+        previewSource.textContent = e.target.value || "출처";
     });
 
 
@@ -1079,7 +1050,6 @@
     runAdminSearch(loadReportMembers)();
     runAdminSearch(loadReportPosts)();
 
-    // 13. 李⑦듃 (Google Charts)
     google.charts.load('current', {packages: ['corechart']});
 
     let chartsDrawn = false;
@@ -1133,7 +1103,6 @@
 
     const chartFont = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
-    // 13-1. ?뚯썝 異붿씠 - Column Chart
     function drawMemberTrend() {
         let rows;
         if (trendPeriod === '7d') {
@@ -1162,7 +1131,6 @@
         new google.visualization.ColumnChart(document.getElementById('chart-member-trend')).draw(data, options);
     }
 
-    // 13-2. ?깃툒 遺꾪룷 - Donut Chart
     function drawMemberType() {
         const data = google.visualization.arrayToDataTable([
             ["Role", "Members"],
@@ -1183,7 +1151,6 @@
         new google.visualization.PieChart(document.getElementById('chart-member-type')).draw(data, options);
     }
 
-    // 13-3. ?쒓컙?蹂??댁슜 - Scatter Chart
     function drawHourly() {
         const h = get24Hours();
         const c7d = [8, 5, 3, 2, 4, 10, 38, 105, 210, 360, 400, 375, 340, 395, 425, 450, 415, 470, 510, 480, 435, 375, 270, 110];
@@ -1214,7 +1181,6 @@
         new google.visualization.ScatterChart(document.getElementById('chart-hourly')).draw(data, options);
     }
 
-    // 13-4. ?붾퀎 寃뚯떆湲 ??- Column Chart
     function drawPostMonthly() {
         let rows;
         if (postMonthlyPeriod === '7d') {
@@ -1243,7 +1209,6 @@
         new google.visualization.ColumnChart(document.getElementById('chart-post-monthly')).draw(data, options);
     }
 
-    // 13-4-2. 移댄뀒怨좊━蹂?寃뚯떆湲 - Column Chart
     function drawPostCategory() {
         let rows;
         if (postCategoryPeriod === '7d') {
@@ -1266,7 +1231,6 @@
         new google.visualization.ColumnChart(document.getElementById('chart-post-category')).draw(data, options);
     }
 
-    // 13-5. ?붾퀎 ?좉퀬 ??- Column Chart
     function drawReportMonthly() {
         let rows;
         if (reportMonthlyPeriod === '7d') {
@@ -1295,7 +1259,6 @@
         new google.visualization.ColumnChart(document.getElementById('chart-report-monthly')).draw(data, options);
     }
 
-    // 13-6. ?좉퀬 泥섎━ ?곹깭 - Donut Chart
     function drawReportStatus() {
         const data = google.visualization.arrayToDataTable([
             ["Status", "Count"],
@@ -1315,7 +1278,6 @@
         new google.visualization.PieChart(document.getElementById('chart-report-status')).draw(data, options);
     }
 
-    // 13-7. ?뚯썝 ?좉퀬 ?좏삎 - Donut Chart
     function drawReportMemberType() {
         const data = google.visualization.arrayToDataTable([
             ["Type", "Count"],
@@ -1337,7 +1299,6 @@
         new google.visualization.PieChart(document.getElementById('chart-report-member-type')).draw(data, donutOptions);
     }
 
-    // 13-8. 湲 ?좉퀬 ?좏삎 - Donut Chart
     function drawReportPostType() {
         const data = google.visualization.arrayToDataTable([
             ["Type", "Count"],
@@ -1359,7 +1320,6 @@
         new google.visualization.PieChart(document.getElementById('chart-report-post-type')).draw(data, donutOptions);
     }
 
-    // ?듦퀎 李⑦듃 lazy draw (portals[6]=?뚯썝, [7]=寃뚯떆湲, [8]=?좉퀬)
     const drawnPortals = new Set();
 
     let trendPeriod = '6m';
@@ -1398,7 +1358,6 @@
         });
     });
 
-    // ?꾪꽣諛??대깽??(李⑦듃蹂??낅┰)
     function bindFilter(id, setFn, drawFn) {
         document.querySelectorAll(`#${id} .stats-filter-btn`).forEach(btn => {
             btn.addEventListener("click", (e) => {
@@ -1435,6 +1394,200 @@
     }, () => {
         if (drawnPortals.has(8)) drawReportMonthly();
     });
+
+    let adminStatsDashboard = null;
+
+    const chartPalette = ['#0f1419', '#536471', '#cfd9de', '#1d9bf0', '#eff3f4', '#8ecdf8', '#7a8b95'];
+
+    const getSeriesRows = (map, period, useSecondary = false) =>
+        (map?.[period] ?? []).map((point) => [
+            point.label,
+            useSecondary ? (point.secondaryValue ?? 0) : (point.value ?? 0),
+        ]);
+
+    const redrawLoadedCharts = () => {
+        if (drawnPortals.has(6)) {
+            drawMemberTrend();
+            drawMemberType();
+            drawHourly();
+        }
+        if (drawnPortals.has(7)) {
+            drawPostMonthly();
+            drawPostCategory();
+        }
+        if (drawnPortals.has(8)) {
+            drawReportMonthly();
+            drawReportStatus();
+            drawReportMemberType();
+            drawReportPostType();
+        }
+    };
+
+    const loadAdminStatsDashboard = async () => {
+        try {
+            adminStatsDashboard = await fetchJson("/api/admin/stats/dashboard");
+            redrawLoadedCharts();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    function drawMemberTrend() {
+        const joinedRows = getSeriesRows(adminStatsDashboard?.memberTrend, trendPeriod);
+        const droppedRows = getSeriesRows(adminStatsDashboard?.memberTrend, trendPeriod, true);
+        const rows = joinedRows.map((row, index) => [row[0], row[1], droppedRows[index]?.[1] ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Period", "Joined", "Dropped"]].concat(rows));
+        const options = {
+            colors: ['#1d9bf0', '#cfd9de'],
+            vAxis: {minValue: 0, format: '0', textStyle: {fontSize: 11, color: '#536471'}},
+            hAxis: {textStyle: {fontSize: 11, color: '#536471'}},
+            legend: {position: 'top', textStyle: {fontSize: 12, color: '#0f1419'}},
+            bar: {groupWidth: '65%'},
+            chartArea: {left: 50, right: 24, top: 36, bottom: 42},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ColumnChart(document.getElementById('chart-member-trend')).draw(data, options);
+    }
+
+    function drawMemberType() {
+        const rows = (adminStatsDashboard?.memberTypes ?? []).map((point) => [point.label, point.value ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Role", "Members"]].concat(rows));
+        const options = {
+            pieHole: 0.4,
+            colors: ['#cfd9de', '#536471', '#0f1419', '#1d9bf0'],
+            legend: {position: 'bottom', textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {top: 20, bottom: 50, left: 20, right: 20},
+            backgroundColor: 'transparent',
+            pieSliceBorderColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.PieChart(document.getElementById('chart-member-type')).draw(data, options);
+    }
+
+    function drawHourly() {
+        const rows = [["Hour", "Visits"]].concat(getSeriesRows(adminStatsDashboard?.hourlyVisits, hourlyPeriod));
+        const data = google.visualization.arrayToDataTable(rows);
+        const options = {
+            colors: ['#1d9bf0'],
+            hAxis: {
+                title: "Hour", minValue: 0, maxValue: 23,
+                ticks: [0, 3, 6, 9, 12, 15, 18, 21, 23],
+                textStyle: {fontSize: 11, color: '#536471'},
+                titleTextStyle: {fontSize: 12, color: '#536471', italic: false},
+            },
+            vAxis: {
+                title: "Visits",
+                textStyle: {fontSize: 11, color: '#536471'},
+                titleTextStyle: {fontSize: 12, color: '#536471', italic: false},
+                minValue: 0,
+            },
+            legend: {position: 'none'},
+            pointSize: 6,
+            chartArea: {left: 55, right: 20, top: 20, bottom: 45},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ScatterChart(document.getElementById('chart-hourly')).draw(data, options);
+    }
+
+    function drawPostMonthly() {
+        const rows = getSeriesRows(adminStatsDashboard?.postMonthly, postMonthlyPeriod);
+        const data = google.visualization.arrayToDataTable([["Period", "Posts"]].concat(rows));
+        const options = {
+            colors: ['#0f1419'],
+            legend: {position: 'none'},
+            bar: {groupWidth: '65%'},
+            vAxis: {minValue: 0, textStyle: {fontSize: 11, color: '#536471'}},
+            hAxis: {textStyle: {fontSize: 11, color: '#536471'}},
+            chartArea: {left: 50, right: 24, top: 20, bottom: 42},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ColumnChart(document.getElementById('chart-post-monthly')).draw(data, options);
+    }
+
+    function drawPostCategory() {
+        const rows = (adminStatsDashboard?.postCategories?.[postCategoryPeriod] ?? []).map((point, index) => [
+            point.label,
+            point.value ?? 0,
+            chartPalette[index % chartPalette.length],
+        ]);
+        const data = google.visualization.arrayToDataTable([["Category", "Posts", {role: "style"}]].concat(rows));
+        const options = {
+            legend: {position: 'none'},
+            bar: {groupWidth: '60%'},
+            vAxis: {minValue: 0, textStyle: {fontSize: 11, color: '#536471'}},
+            hAxis: {textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {left: 55, right: 20, top: 20, bottom: 50},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ColumnChart(document.getElementById('chart-post-category')).draw(data, options);
+    }
+
+    function drawReportMonthly() {
+        const rows = getSeriesRows(adminStatsDashboard?.reportMonthly, reportMonthlyPeriod);
+        const data = google.visualization.arrayToDataTable([["Period", "Reports"]].concat(rows));
+        const options = {
+            colors: ['#536471'],
+            legend: {position: 'none'},
+            bar: {groupWidth: '65%'},
+            vAxis: {minValue: 0, textStyle: {fontSize: 11, color: '#536471'}},
+            hAxis: {textStyle: {fontSize: 11, color: '#536471'}},
+            chartArea: {left: 50, right: 24, top: 20, bottom: 42},
+            backgroundColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.ColumnChart(document.getElementById('chart-report-monthly')).draw(data, options);
+    }
+
+    function drawReportStatus() {
+        const rows = (adminStatsDashboard?.reportStatuses ?? []).map((point) => [point.label, point.value ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Status", "Count"]].concat(rows));
+        const options = {
+            pieHole: 0.4,
+            colors: ['#cfd9de', '#0f1419', '#536471'],
+            legend: {position: 'bottom', textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {top: 20, bottom: 50, left: 20, right: 20},
+            backgroundColor: 'transparent',
+            pieSliceBorderColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.PieChart(document.getElementById('chart-report-status')).draw(data, options);
+    }
+
+    function drawReportMemberType() {
+        const rows = (adminStatsDashboard?.reportMemberTypes ?? []).map((point) => [point.label, point.value ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Type", "Count"]].concat(rows));
+        const options = {
+            pieHole: 0.4,
+            colors: ['#0f1419', '#536471', '#cfd9de', '#1d9bf0', '#eff3f4'],
+            legend: {position: 'bottom', textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {top: 20, bottom: 50, left: 20, right: 20},
+            backgroundColor: 'transparent',
+            pieSliceBorderColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.PieChart(document.getElementById('chart-report-member-type')).draw(data, options);
+    }
+
+    function drawReportPostType() {
+        const rows = (adminStatsDashboard?.reportPostTypes ?? []).map((point) => [point.label, point.value ?? 0]);
+        const data = google.visualization.arrayToDataTable([["Type", "Count"]].concat(rows));
+        const options = {
+            pieHole: 0.4,
+            colors: ['#0f1419', '#536471', '#cfd9de', '#1d9bf0', '#eff3f4'],
+            legend: {position: 'bottom', textStyle: {fontSize: 12, color: '#0f1419'}},
+            chartArea: {top: 20, bottom: 50, left: 20, right: 20},
+            backgroundColor: 'transparent',
+            pieSliceBorderColor: 'transparent',
+            fontName: chartFont,
+        };
+        new google.visualization.PieChart(document.getElementById('chart-report-post-type')).draw(data, options);
+    }
+
+    loadAdminStatsDashboard();
 
 
 };

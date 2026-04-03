@@ -7,7 +7,6 @@ import com.app.globalgates.repository.BookmarkFolderDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,29 +25,19 @@ public class BookmarkService {
     }
 
     //    폴더 수정
-    @Caching(
-            evict = {
-                    @CacheEvict(value = "bookmark:folder", key = "#bookmarkFolderDTO.id"),
-                    @CacheEvict(value = "bookmark:folder:list", allEntries = true)
-            }
-    )
+    @CacheEvict(value = "bookmark:folder:list", allEntries = true)
     public void updateFolder(BookmarkFolderDTO bookmarkFolderDTO) {
         bookmarkFolderDAO.update(bookmarkFolderDTO);
     }
 
     //    폴더 삭제
-    @Caching(evict = {
-            @CacheEvict(value = "bookmark:folder", key = "#id"),
-            @CacheEvict(value = "bookmark:folder:list", allEntries = true),
-            @CacheEvict(value = "bookmark:list", allEntries = true)
-    })
+    @CacheEvict(value = {"bookmark:folder:list", "bookmark:list"}, allEntries = true)
     public void deleteFolder(Long id) {
         bookmarkDAO.clearFolderId(id);
         bookmarkFolderDAO.delete(id);
     }
 
     //    폴더 단건 조회
-    @Cacheable(value = "bookmark:folder", key = "#id")
     public Optional<BookmarkFolderDTO> getFolder(Long id) {
         return bookmarkFolderDAO.findById(id);
     }
@@ -60,40 +49,35 @@ public class BookmarkService {
     }
 
     //    북마크 추가
-    @CacheEvict(value = {"bookmark:list", "community:post:list", "post:list", "post"}, allEntries = true)
+    @CacheEvict(value = "bookmark:list", allEntries = true)
     public void addBookmark(BookmarkDTO bookmarkDTO) {
         bookmarkDAO.save(bookmarkDTO);
     }
 
     //    북마크 삭제
-    @Caching(evict = {
-            @CacheEvict(value = "bookmark", key = "#id"),
-            @CacheEvict(value = "bookmark:list", allEntries = true)
-    })
+    @CacheEvict(value = "bookmark:list", allEntries = true)
     public void deleteBookmark(Long id) {
         bookmarkDAO.delete(id);
     }
 
     //    회원/게시글 기준 북마크 삭제
-    @CacheEvict(value = {"bookmark", "bookmark:list", "community:post:list", "post:list", "post"}, allEntries = true)
+    @CacheEvict(value = "bookmark:list", allEntries = true)
     public void deleteBookmark(Long memberId, Long postId) {
         bookmarkDAO.deleteByMemberIdAndPostId(memberId, postId);
     }
 
     //    북마크 폴더 이동
-    @CacheEvict(value = {"bookmark", "bookmark:list"}, allEntries = true)
+    @CacheEvict(value = "bookmark:list", allEntries = true)
     public void updateFolderId(BookmarkDTO bookmarkDTO) {
         bookmarkDAO.updateFolderId(bookmarkDTO);
     }
 
     //    북마크 단건 조회
-    @Cacheable(value = "bookmark", key = "#id")
     public Optional<BookmarkDTO> getBookmark(Long id) {
         return bookmarkDAO.findById(id);
     }
 
     //    회원/게시글 기준 북마크 단건 조회
-    @Cacheable(value = "bookmark", key = "'member:' + #memberId + ':post:' + #postId")
     public Optional<BookmarkDTO> getBookmark(Long memberId, Long postId) {
         return bookmarkDAO.findByMemberIdAndPostId(memberId, postId);
     }
@@ -117,7 +101,6 @@ public class BookmarkService {
     }
 
     //    북마크 개수 조회
-    @Cacheable(value = "bookmark:list", key = "'count:' + #memberId")
     public int getBookmarkCount(Long memberId) {
         return bookmarkDAO.countByMemberId(memberId);
     }

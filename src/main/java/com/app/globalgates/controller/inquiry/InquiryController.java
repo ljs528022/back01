@@ -22,4 +22,5 @@ public class InquiryController {
     public String goToInquiryMemberList() {
         return "Inquiry/Inquiry_list";
     }
+
 }
