@@ -45,4 +45,9 @@ public class AdvertisementDAO {
     public void delete(Long id) {
         advertisementMapper.delete(id);
     }
+
+    // 광고 노출수 차감
+    public void minusImpressionCount(Long id) {
+        advertisementMapper.minusImpressionCount(id);
+    }
 }

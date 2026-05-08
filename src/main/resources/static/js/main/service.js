@@ -149,6 +149,12 @@ const service = (() => {
         return data;
     };
 
+    const minusImpressionCount = async (adId) => {
+        await fetch(`/api/main/ads/${adId}/impression`, {
+            method: 'POST'
+        });
+    };
+
     const getSuggestions = async (memberId, callback) => {
         const response = await fetch(`/api/main/follows/${memberId}/suggestions`);
         const data = await response.json();
@@ -222,6 +228,7 @@ const service = (() => {
         getMyProducts: getMyProducts,
         getSuggestions: getSuggestions,
         getAds: getAds,
+        minusImpressionCount: minusImpressionCount,
         logout: logout,
         savePostTemp: savePostTemp, getPostTemps: getPostTemps, loadPostTemp: loadPostTemp, deletePostTemp: deletePostTemp, deletePostTemps: deletePostTemps,
         searchMentionMembers: searchMentionMembers

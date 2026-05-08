@@ -37,12 +37,17 @@ select * from tbl_follow;
 
 select * from tbl_advertisement;
 
+update tbl_advertisement set impression_estimate=5 where id=1;
+update tbl_advertisement set impression_estimate=5 where id=10543;
+
 select * from tbl_ad_file;
 
 select * from tbl_file;
 
 select * from tbl_advertisement where id=12008;
 select * from tbl_advertisement where id=12009;
+
+select * from tbl_advertisement where impression_estimate>0;
 
 select * from tbl_ad_tag where ad_id=12008;
 select * from tbl_ad_tag where ad_id=12009;

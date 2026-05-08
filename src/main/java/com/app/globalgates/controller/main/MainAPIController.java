@@ -56,6 +56,14 @@ public class MainAPIController implements MainAPIControllerDocs {
         return ads;
     }
 
+//    광고 노출수 차감
+    @PostMapping("/ads/{id}/impression")
+    @LogStatus
+    public void minusImpressionCount(@PathVariable Long id) {
+        log.info("광고 노출수 차감됨 광고Id: {}", id);
+        advertisementService.minusImpressionCount(id);
+    }
+
 //    게시글 목록 조회
     @GetMapping("/posts/list/{page}")
     @LogStatusWithReturn
