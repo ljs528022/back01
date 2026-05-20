@@ -936,6 +936,7 @@ const postModalApi = (() => {
         const closeBtn = overlay.querySelector(".tweet-modal__close");
         const editor = overlay.querySelector(".tweet-modal__editor");
         const gaugeText = overlay.querySelector(".composerGaugeText");
+        const aiBtn = document.querySelector(".tweet-modal__ai");
         const submit = overlay.querySelector(".tweet-modal__submit");
         const maxLength = 500;
         let editPostId = null;
@@ -1023,6 +1024,35 @@ const postModalApi = (() => {
             } else {
                 gaugeText.style.color = "";
                 submit.disabled = length === 0;
+            }
+        });
+
+        aiBtn.addEventListener("click", async () => {
+            const content = editor.textContent;
+            if (!content) {
+                alert("내용을 입력해주세요.");
+                return;
+            }
+
+            aiBtn.disabled = true;
+            aiBtn.textContent = "분석 중...";
+
+            try {
+                const result = await postModalService.calcTrustScore(content);
+                // -----------------------------------------------
+
+                // overlay 기준으로 현재 상태 수집
+                const postData = _trust.collectPostData(overlay, result);
+
+                // 신뢰도 모달 열기
+                _trust.openModal(postData);
+
+            } catch (e) {
+                console.error("[TrustModal] 분석 실패:", e);
+                alert("신뢰도 분석에 실패했습니다. 다시 시도해 주세요.");
+            } finally {
+                aiBtn.disabled = false;
+                aiBtn.textContent = "신뢰도 측정";
             }
         });
 
@@ -1160,6 +1190,8 @@ const postModalApi = (() => {
             targetPostId = null;
             if (mention) { mention.closeMentionDropdown(); }
             if (ctx && ctx.reset) { ctx.reset(); }
+
+            _trust.closeModal();
         }
 
         closeBtn.addEventListener("click", () => { close(); });
@@ -1229,6 +1261,202 @@ const postModalApi = (() => {
 
         return { close: close };
     }
+
+    const _trust = (() => {
+
+        // ----- SVG 아이콘 -----
+        const ICONS = {
+            check: `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>`,
+            warn:  `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`,
+            error: `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`,
+            image: `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`,
+            tag:   `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>`,
+            pin:   `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
+            box:   `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M20 6h-2.18c.07-.31.18-.62.18-.96C18 3.36 16.64 2 15.04 2c-.96 0-1.86.48-2.4 1.2l-.64.8-.64-.8C10.86 2.48 9.96 2 9 2 7.36 2 6 3.36 6 5.04c0 .34.11.65.18.96H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>`,
+            thumb: `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>`,
+        };
+
+        // ----- 점수 계산 -----
+        function calcScores(data) {
+            const aiPts    = data.aiResult === 2 ? 60 : data.aiResult === 1 ? 30 : 0;
+            const imgPts   = data.hasImage    ? 20 : 0;
+            const tagPts   = data.hasTag      ? 10 : 0;
+            const extraPts = (data.hasLocation ? 5 : 0) + (data.hasProduct ? 5 : 0);
+            const total    = Math.min(100, aiPts + imgPts + tagPts + extraPts);
+            return { aiPts, imgPts, tagPts, extraPts, total };
+        }
+
+        // ----- 현재 compose modal 상태 수집 -----
+        // overlay  : [data-compose-modal] 최상위 div
+        // aiScore  : service에서 받은 0 | 1 | 2
+        function collectPostData(overlay, aiScore) {
+            // [이미지] data-attachment-media 안에 img/video 존재 여부
+            // → attachmentPreview(.tweet-modal__attachment)에 "off" 가 없으면 첨부 상태이지만,
+            //   더 정확하게 실제 자식 요소로 판별한다.
+            const attachmentMedia = overlay.querySelector("[data-attachment-media]");
+
+            // [태그] .tag-input 안의 .tagDiv 칩 개수로 판별
+            // → tagDiv : addTag() 함수가 <span class="tagDiv"> 로 생성해서 .tag-input 에 추가
+            const tagInput = overlay.querySelector(".tag-input");
+
+            // [위치] .tweet-modal__location-display 버튼의 hidden 속성 + input value
+            // → 위치 미선택: hidden 속성 있음 / 선택: removeAttribute("hidden")
+            const locationDisplay = overlay.querySelector(".tweet-modal__location-display");
+            const locationInput   = locationDisplay
+                ? locationDisplay.querySelector(".tweet-modal__location-display-text-inner")
+                : null;
+
+            // [상품] renderSelectedProduct()가 [data-selected-product] 속성의 div를 .tweet-modal__input-wrap 에 추가
+            // → 상품 선택 완료 후 DOM에 존재, 제거 버튼 클릭 시 remove()
+
+            return {
+                aiResult: aiScore,
+                hasImage:    attachmentMedia
+                    ? attachmentMedia.querySelectorAll("img, video").length > 0
+                    : false,
+                hasTag:      tagInput
+                    ? tagInput.querySelectorAll(".tagDiv").length > 0
+                    : false,
+                hasLocation: locationDisplay && !locationDisplay.hidden
+                    ? (locationInput?.value?.trim() ?? "").length > 0
+                    : false,
+                hasProduct:  !!overlay.querySelector("[data-selected-product]"),
+            };
+        }
+
+        // ----- 개선 제안 생성 -----
+        function buildSuggestions(data) {
+            const items = [];
+
+            if (data.aiResult === 2) {
+                items.push({ type: "ok",   icon: ICONS.check, title: "내용이 주제에 부합합니다",       desc: "게시글의 내용이 카테고리 주제와 잘 맞습니다. 현재 내용을 유지하세요." });
+            } else if (data.aiResult === 1) {
+                items.push({ type: "warn", icon: ICONS.warn,  title: "내용이 주제를 일부 벗어났습니다", desc: "일부 내용이 선택한 카테고리와 관련이 적습니다. 내용을 보완하거나 적합한 카테고리로 변경해 보세요." });
+            } else {
+                items.push({ type: "bad",  icon: ICONS.error, title: "내용이 주제와 크게 다릅니다",     desc: "게시글이 선택한 카테고리와 맞지 않습니다. 내용을 전면 수정하거나 올바른 카테고리를 선택해 주세요." });
+            }
+
+            if (!data.hasImage)    items.push({ type: "info", icon: ICONS.image, title: "이미지를 첨부하면 신뢰도가 높아집니다", desc: "관련 사진이나 자료 이미지를 추가하면 거래 상품을 명확하게 확인 할 수 있습니다." });
+            if (!data.hasTag)      items.push({ type: "info", icon: ICONS.tag,   title: "태그를 등록해 주세요",                  desc: "관련 키워드 태그를 추가하면 검색에 용이해집니다." });
+            if (!data.hasLocation) items.push({ type: "info", icon: ICONS.pin,   title: "위치를 활용 해보세요",       desc: "거래 또는 연관 위치를 태그하면 신뢰도와 검색 노출이 향상됩니다." });
+            if (!data.hasProduct)  items.push({ type: "info", icon: ICONS.box,   title: "상품을 등록하세요",     desc: "관련 상품을 게시글에 연결하면 원하는 거래를 빨리 찾을 수 있습니다." });
+
+            if (data.aiResult === 2 && data.hasImage && data.hasTag && data.hasLocation && data.hasProduct) {
+                items.push({ type: "ok", icon: ICONS.thumb, title: "모든 항목이 완벽합니다", desc: "이미지·태그·위치·상품까지 모두 등록되어 최고 수준의 신뢰도를 갖췄습니다." });
+            }
+
+            return items;
+        }
+
+        // ----- 모달 렌더 -----
+        let _countAnim = null;
+
+        function render(data) {
+            const sc = calcScores(data);
+            const { total } = sc;
+
+            let strokeColor, gradeClass, gradeLabel, gradeSvg, heroDesc;
+            if (total >= 80) {
+                strokeColor = "#00ba7c"; gradeClass = "good"; gradeLabel = "신뢰도 높음";
+                gradeSvg  = `<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>`;
+                heroDesc  = "게시글의 신뢰도가 높습니다. 지금 바로 게시할 수 있습니다.";
+            } else if (total >= 50) {
+                strokeColor = "#f4a100"; gradeClass = "warn"; gradeLabel = "주의 필요";
+                gradeSvg  = `<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`;
+                heroDesc  = "신뢰도가 보통 수준입니다. 아래 개선 제안을 참고해 보완할 수 있습니다.";
+            } else {
+                strokeColor = "#f4212e"; gradeClass = "bad";  gradeLabel = "검토 필요";
+                gradeSvg  = `<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`;
+                heroDesc  = "신뢰도가 낮습니다. 내용을 수정하고 이미지·태그·위치를 추가해 주세요.";
+            }
+
+            const arc   = document.getElementById("trustRingArc");
+            const numEl = document.getElementById("trustRingNum");
+            arc.style.stroke           = strokeColor;
+            arc.style.strokeDashoffset = 201 - (total / 100) * 201;
+            numEl.style.color          = strokeColor;
+
+            if (_countAnim) cancelAnimationFrame(_countAnim);
+            let cur = 0;
+            const step = () => {
+                cur = Math.min(cur + Math.ceil((total - cur) / 6 + 1), total);
+                numEl.textContent = cur;
+                if (cur < total) _countAnim = requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+
+            const pill = document.getElementById("trustGradePill");
+            pill.className = "trust-grade-pill " + gradeClass;
+            pill.innerHTML = gradeSvg + " " + gradeLabel;
+            document.getElementById("trustHeroDesc").textContent = heroDesc;
+
+            const setBar = (vId, bId, pts, max) => {
+                document.getElementById(vId).textContent = pts;
+                document.getElementById(bId).style.width = Math.round((pts / max) * 100) + "%";
+            };
+            setTimeout(() => {
+                setBar("trustV1", "trustB1", sc.aiPts,    60);
+                setBar("trustV2", "trustB2", sc.imgPts,   20);
+                setBar("trustV3", "trustB3", sc.tagPts,   10);
+                setBar("trustV4", "trustB4", sc.extraPts, 10);
+            }, 80);
+
+            document.getElementById("trustSuggestList").innerHTML = buildSuggestions(data).map(item =>
+                `<div class="trust-suggest-item">
+                    <div class="trust-suggest-icon ${item.type}">${item.icon}</div>
+                    <div class="trust-suggest-text">
+                        <div class="trust-suggest-title">${item.title}</div>
+                        <div class="trust-suggest-desc">${item.desc}</div>
+                    </div>
+                </div>`
+            ).join("");
+        }
+
+        // ----- 열기 / 닫기 -----
+        function openModal(data) {
+            const overlay    = document.getElementById('trustModalOverlay');
+            const tweetModal = document.querySelector('[data-compose-modal] .tweet-modal');
+            if (!overlay || !tweetModal) return;
+
+            // compose modal 기준 오른쪽 + 12px 간격
+            const rect = tweetModal.getBoundingClientRect();
+            overlay.style.left = (rect.right + 12) + 'px';
+            overlay.style.top  = rect.top + 'px';
+
+            ['trustB1','trustB2','trustB3','trustB4'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.width = '0%';
+            });
+
+            overlay.classList.remove('off');
+            overlay.classList.add('open');
+            requestAnimationFrame(() => render(data));
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('trustModalOverlay');
+            overlay?.classList.remove('open');
+            setTimeout(() => overlay?.classList.add('off'), 300);
+        }
+
+        // ----- trust modal 버튼 이벤트 바인딩 (bootstrap 시 1회 호출) -----
+        function bindModalButtons(composeSubmitBtn) {
+            document.getElementById("trustModalClose")?.addEventListener("click", closeModal);
+            document.getElementById("trustModalCancel")?.addEventListener("click", closeModal);
+
+            document.getElementById("trustModalOverlay")?.addEventListener("click", (e) => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+
+            // trust modal의 "게시하기" → compose modal의 원래 submit 버튼 클릭
+            document.getElementById("trustModalSubmit")?.addEventListener("click", () => {
+                closeModal();
+                composeSubmitBtn?.click();
+            });
+        }
+
+        return { collectPostData, openModal, closeModal, bindModalButtons };
+    })();
 
     // 페이지 진입 시 한 번 호출하면 작성/답글 모달이 자동으로 셋업된다. 마크업 없는 페이지는 자동 skip.
     function bootstrap(options) {

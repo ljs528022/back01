@@ -136,11 +136,29 @@ const advertisementService = (() => {
         }
     };
 
+    const recommendBudget = async ({ adTitle, adBody }, callback) => {
+        const response = await fetch('/ai/ad/recommend', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title:       adTitle,
+                description: adBody,
+            }),
+        });
+
+        if (!response.ok) throw new Error('AI 추천 예산 요청 실패');
+
+        const result = await response.json();
+
+        if (callback) callback(result[0]);
+    }
+
     return {
         memberInfo: memberInfo,
         write: write,
         savePayment: savePayment,
         list: list,
-        detail: detail
+        detail: detail,
+        recommendBudget: recommendBudget,
     };
 })();

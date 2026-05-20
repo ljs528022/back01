@@ -5599,6 +5599,7 @@ input::-webkit-search-cancel-button, input::-webkit-search-decoration, input::-w
 
 .MarketplaceAdPrimaryButton,
 .MarketplaceAdSecondaryButton,
+.MarketplaceAdAIButton,
 .MarketplaceAdInlineButton,
 .MarketplaceAdTextButton,
 .MarketplaceAdModalClose,
@@ -5610,7 +5611,8 @@ input::-webkit-search-cancel-button, input::-webkit-search-decoration, input::-w
 }
 
 .MarketplaceAdPrimaryButton,
-.MarketplaceAdSecondaryButton {
+.MarketplaceAdSecondaryButton,
+.MarketplaceAdAIButton {
     min-height: 44px;
     padding: 0 18px;
     border-radius: 999px;
@@ -5625,7 +5627,18 @@ input::-webkit-search-cancel-button, input::-webkit-search-decoration, input::-w
     box-shadow: rgba(15, 23, 42, 0.2) 0 12px 24px -14px;
 }
 
+.MarketplaceAdAIButton {
+    color: rgb(255, 255, 255);
+    background: rgb(69, 120, 233);
+    box-shadow: rgba(15, 23, 42, 0.2) 0 12px 24px -14px;
+}
+
 .MarketplaceAdPrimaryButton:hover {
+    transform: translateY(-1px);
+    box-shadow: rgba(15, 23, 42, 0.28) 0 16px 28px -16px;
+}
+
+.MarketplaceAdAIButton:hover {
     transform: translateY(-1px);
     box-shadow: rgba(15, 23, 42, 0.28) 0 16px 28px -16px;
 }
@@ -5640,6 +5653,7 @@ input::-webkit-search-cancel-button, input::-webkit-search-decoration, input::-w
     background: rgb(255, 255, 255);
 }
 
+.MarketplaceAdAIButton--block,
 .MarketplaceAdSecondaryButton--block,
 .MarketplaceAdPrimaryButton--block {
     width: 100%;
@@ -6461,6 +6475,10 @@ input::-webkit-search-cancel-button, input::-webkit-search-decoration, input::-w
     box-shadow: none;
 }
 
+.MarketplaceAdAIResult {
+    padding: 10px;
+}
+
 .MarketplaceAdSidebarCardEyebrow,
 .MarketplaceAdEyebrow,
 .MarketplaceAdPanelEyebrow {
@@ -6491,7 +6509,8 @@ input::-webkit-search-cancel-button, input::-webkit-search-decoration, input::-w
 }
 
 .MarketplaceAdPrimaryButton,
-.MarketplaceAdSecondaryButton {
+.MarketplaceAdSecondaryButton,
+.MarketplaceAdAIButton {
     min-height: 40px;
     border-radius: 999px;
     box-shadow: none;
@@ -6591,14 +6610,16 @@ input::-webkit-search-cancel-button, input::-webkit-search-decoration, input::-w
 }
 
 .MarketplaceAdPrimaryButton,
-.MarketplaceAdSecondaryButton {
+.MarketplaceAdSecondaryButton,
+.MarketplaceAdAIButton {
     min-height: 32px;
     padding: 0 9px;
     font-size: 12px;
 }
 
 .MarketplaceAdButtonGroup--uniform > .MarketplaceAdPrimaryButton,
-.MarketplaceAdButtonGroup--uniform > .MarketplaceAdSecondaryButton {
+.MarketplaceAdButtonGroup--uniform > .MarketplaceAdSecondaryButton,
+.MarketplaceAdButtonGroup--uniform > .MarketplaceAdAIButton{
     width: fit-content;
     min-width: 0;
     justify-content: center;
@@ -6617,10 +6638,12 @@ input::-webkit-search-cancel-button, input::-webkit-search-decoration, input::-w
 }
 
 .MarketplaceAdActionStack.MarketplaceAdButtonGroup--uniform > .MarketplaceAdPrimaryButton,
-.MarketplaceAdActionStack.MarketplaceAdButtonGroup--uniform > .MarketplaceAdSecondaryButton {
+.MarketplaceAdActionStack.MarketplaceAdButtonGroup--uniform > .MarketplaceAdSecondaryButton,
+.MarketplaceAdActionStack.MarketplaceAdButtonGroup--uniform > .MarketplaceAdAIButton {
     width: fit-content;
 }
 
+.MarketplaceAdAIButton--block,
 .MarketplaceAdSecondaryButton--block,
 .MarketplaceAdPrimaryButton--block {
     width: fit-content;

@@ -2,6 +2,7 @@ package com.app.globalgates.controller.video_chat;
 
 import com.app.globalgates.auth.CustomUserDetails;
 import com.app.globalgates.domain.video_chat.VideoChatVO;
+import com.app.globalgates.dto.FileRecodingDTO;
 import com.app.globalgates.dto.MeetingDTO;
 import com.app.globalgates.dto.chat.ChatRoomDTO;
 import com.app.globalgates.dto.video_chat.VideoChatDTO;
@@ -17,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -102,6 +104,17 @@ public class VideoChatAPIController implements VideoChatAPIControllerDocs {
             return ResponseEntity.internalServerError()
                     .body(Map.of("errorMessage", "업로드 실패: " + e.getMessage()));
         }
+    }
+
+    // 화상통화 상대방과의 녹화 목록 조회
+    @GetMapping("list")
+    public ResponseEntity<?> getRecords(
+            @RequestParam Long opponentId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getId();
+        List<FileRecodingDTO> records = videoChatService.getRecordsByMeetingAndMemberId(opponentId, memberId);
+
+        return ResponseEntity.ok(records);
     }
 
     // 로그인한 본인 확인

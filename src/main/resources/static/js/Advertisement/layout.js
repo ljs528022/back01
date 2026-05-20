@@ -120,5 +120,44 @@ const advertisementLayout = (() => {
             .forEach((node) => { node.textContent = ad.description; });
     }
 
-    return {showAdList: showAdList, showDetail: showDetail};
+    const showRecommendBudget = (result) => {
+
+        // AI 결과 div 활성화 및 값 반영
+        const aiResult = document.querySelector('[data-ai-result]');
+        if (aiResult) {
+            aiResult.hidden = false;
+
+            aiResult.querySelector('[data-ai-field="predicted_budget"]').textContent =
+                `₩${Math.round(result.predicted_budget).toLocaleString("ko-KR")}`;
+
+            aiResult.querySelector('[data-ai-field="predicted_impression"]').textContent =
+                `약 ${Math.round(result.predicted_impression).toLocaleString("ko-KR")}회`;
+
+            aiResult.querySelector('[data-ai-field="predicted_min"]').textContent =
+                `₩${Math.round(result.predicted_min).toLocaleString("ko-KR")}`;
+
+            aiResult.querySelector('[data-ai-field="predicted_max"]').textContent =
+                `₩${Math.round(result.predicted_max).toLocaleString("ko-KR")}`;
+
+            requestAnimationFrame(() => {
+                aiResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+
+        // 토스트
+        const toast = document.querySelector('[data-toast]');
+        if (toast) {
+            toast.textContent = `비슷한 광고에 대한 정보를 알려드립니다!`;
+            toast.hidden = false;
+
+            setTimeout(() => { toast.hidden = true; }, 2200);
+        }
+    };
+
+
+    return {
+        showAdList: showAdList,
+        showDetail: showDetail,
+        showRecommendBudget: showRecommendBudget,
+    };
 })();

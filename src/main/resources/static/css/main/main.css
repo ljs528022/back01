@@ -2648,6 +2648,20 @@ input.tweet-modal__location-display-text-inner {
     transition: background-color 0.2s;
 }
 
+.tweet-modal__ai {
+    min-width: 74px;
+    padding: 8px 16px;
+    background-color: #1d9bf0;
+    color: #fff;
+    border: none;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s;
+}
+
 .tweet-modal__submit:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -5549,4 +5563,372 @@ button.AdCreativePreviewSourceButton.AdCreativePreviewSource {
     color: rgb(83, 100, 113);
     font-size: 14px;
     line-height: 1.4;
+}
+
+/* ==========================================================
+   trust-modal.css
+   신뢰도 측정 결과 모달 전용 스타일
+   기존 tweet-modal-overlay / tweet-modal 스타일과 분리
+   ========================================================== */
+
+/* ── 오버레이 ── */
+.trust-modal-overlay {
+    position: fixed;
+    z-index: 300;
+    top: 32px;          /* tweet-modal-overlay padding-top 과 동일하게 */
+    left: 0;            /* JS에서 동적으로 계산해서 덮어씀 */
+    opacity: 0;
+    transform: translateX(-24px);
+    pointer-events: none;
+    transition: opacity .3s cubic-bezier(.4, 0, .2, 1),
+    transform .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+.trust-modal-overlay.open {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.trust-modal-overlay.off {
+    display: none;
+}
+
+/* ── 모달 카드 ── */
+.trust-modal {
+    width: 320px;
+    max-height: 86vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: none;
+}
+
+/* ── 헤더 ── */
+.trust-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px 6px;
+    flex-shrink: 0;
+}
+
+.trust-modal__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f1419;
+}
+
+.trust-modal__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #0f1419;
+    fill: currentColor;
+}
+
+.trust-modal__close:hover {
+    background: rgba(15, 20, 25, 0.1);
+}
+
+/* ── 점수 히어로 ── */
+.trust-score-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    padding: 16px 20px;
+    background: #f7f9f9;
+    margin: 4px 16px 0;
+    border-radius: 14px;
+    border: 1px solid #eff3f4;
+}
+
+/* ── 링 차트 ── */
+.trust-ring-wrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.trust-ring-wrap svg {
+    display: block;
+}
+
+#trustRingArc {
+    transition: stroke-dashoffset 0.85s cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 0.4s ease;
+}
+
+.trust-ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.trust-ring-num {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    transition: color 0.4s ease;
+}
+
+.trust-ring-denom {
+    font-size: 11px;
+    color: #536471;
+    margin-top: 1px;
+}
+
+/* ── 히어로 우측 텍스트 ── */
+.trust-hero-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.trust-grade-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    fill: currentColor;
+}
+
+.trust-grade-pill.good {
+    background: #e6f4ea;
+    color: #1e7e34;
+}
+
+.trust-grade-pill.warn {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.trust-grade-pill.bad {
+    background: #fce8e8;
+    color: #a61c00;
+}
+
+.trust-hero-desc {
+    font-size: 13px;
+    color: #536471;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── 세부 점수 그리드 ── */
+.trust-sub-scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 12px 16px 0;
+}
+
+.trust-sub-card {
+    padding: 10px 12px;
+    background: #f7f9f9;
+    border-radius: 12px;
+    border: 1px solid #eff3f4;
+}
+
+.trust-sub-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: #536471;
+    margin-bottom: 4px;
+    fill: currentColor;
+}
+
+/* 세부 레이블 색상 */
+.trust-sub-label--ai    { color: #1d9bf0; fill: #1d9bf0; }
+.trust-sub-label--img   { color: #00ba7c; fill: #00ba7c; }
+.trust-sub-label--tag   { color: #ff7a00; fill: #ff7a00; }
+.trust-sub-label--extra { color: #7856ff; fill: #7856ff; }
+
+.trust-sub-val {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.trust-sub-val--ai    { color: #1d9bf0; }
+.trust-sub-val--img   { color: #00ba7c; }
+.trust-sub-val--tag   { color: #ff7a00; }
+.trust-sub-val--extra { color: #7856ff; }
+
+.trust-sub-max {
+    font-size: 11px;
+    color: #536471;
+    font-weight: 400;
+}
+
+/* ── 미니 바 ── */
+.trust-bar-bg {
+    height: 3px;
+    background: #eff3f4;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.trust-bar {
+    height: 100%;
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trust-bar--ai    { background: #1d9bf0; }
+.trust-bar--img   { background: #00ba7c; }
+.trust-bar--tag   { background: #ff7a00; }
+.trust-bar--extra { background: #7856ff; }
+
+/* ── 구분선 ── */
+.trust-divider {
+    height: 1px;
+    background: #eff3f4;
+    margin: 14px 16px 0;
+}
+
+/* ── 개선 제안 ── */
+.trust-suggest-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 20px 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #536471;
+    fill: #ff7a00;
+}
+
+.trust-suggest-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 16px 16px;
+}
+
+.trust-suggest-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #eff3f4;
+    background: #ffffff;
+}
+
+.trust-suggest-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    fill: currentColor;
+}
+
+.trust-suggest-icon.ok   { background: #e6f4ea; color: #1e7e34; fill: #1e7e34; }
+.trust-suggest-icon.warn { background: #fff3cd; color: #856404; fill: #856404; }
+.trust-suggest-icon.bad  { background: #fce8e8; color: #a61c00; fill: #a61c00; }
+.trust-suggest-icon.info { background: #e8f5fd; color: #0c5a9e; fill: #0c5a9e; }
+
+.trust-suggest-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.trust-suggest-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f1419;
+    margin-bottom: 2px;
+}
+
+.trust-suggest-desc {
+    font-size: 12px;
+    color: #536471;
+    line-height: 1.5;
+}
+
+/* ── 푸터 ── */
+.trust-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px 14px;
+    border-top: 1px solid #eff3f4;
+    flex-shrink: 0;
+}
+
+.trust-modal__btn-ghost {
+    padding: 7px 16px;
+    border: 1px solid #cfd9de;
+    border-radius: 999px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f1419;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.trust-modal__btn-ghost:hover {
+    background: #f7f9f9;
+}
+
+.trust-modal__btn-primary {
+    padding: 7px 18px;
+    border: none;
+    border-radius: 999px;
+    background: #0f1419;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s;
+}
+
+.trust-modal__btn-primary:hover {
+    opacity: 0.85;
+}
+
+/* ── 모바일 ── */
+@media (max-width: 600px) {
+    .trust-modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .trust-modal {
+        max-width: 100%;
+        max-height: 95vh;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .trust-sub-scores {
+        grid-template-columns: 1fr 1fr;
+    }
 }

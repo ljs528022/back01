@@ -21,5 +21,20 @@ const postModalService = (() => {
         setTimeout(() => toast.remove(), 3000);
     };
 
-    return { getMyCommunities, writeCommunityPost, showToast };
+    // AI 게시글 내용 신뢰도 측정
+    const calcTrustScore = async (text) => {
+        const response = await fetch('/ai/post/trust', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text }),
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        if (!response.ok) throw new Error('신뢰도 분석 요청 실패');
+        return data.score;   // { score: 0 | 1 | 2 }
+    };
+
+    return { getMyCommunities, writeCommunityPost, showToast, calcTrustScore };
 })();

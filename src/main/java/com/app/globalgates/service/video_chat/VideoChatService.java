@@ -76,6 +76,12 @@ public class VideoChatService {
         fileRecodingDAO.save(fileRecodingDTO.toFileRecodingVO());
     }
 
+    // 회의 id와 유저 id로 모든 녹화파일 조회
+    @LogStatusWithReturn
+    public List<FileRecodingDTO> getRecordsByMeetingAndMemberId(Long opponentId, Long memberId) {
+        return fileRecodingDAO.findByMeetingAndMemberId(opponentId, memberId);
+    }
+
     // 회의 id로 해당 회의의 녹음 파일 조회
     @LogStatusWithReturn
     public FileRecodingDTO getRecodingFile(Long meetingId) {

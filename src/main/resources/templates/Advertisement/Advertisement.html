@@ -155,6 +155,8 @@
                 <div class="MarketplaceAdHeaderActions MarketplaceAdButtonGroup MarketplaceAdButtonGroup--uniform">
                     <button class="MarketplaceAdSecondaryButton" data-header-action="guide" type="button">운영 가이드
                     </button>
+                    <button class="MarketplaceAdAIButton" data-header-action="AI" type="button">추천 예산 확인
+                    </button>
                     <button class="MarketplaceAdPrimaryButton" data-header-action="payment" type="button">결제 및 접수
                     </button>
                 </div>
@@ -228,6 +230,26 @@
                                         </div>
                                     </div>
                                     <p class="MarketplaceAdFormNote">커뮤니티 글처럼 간단히 작성되며, 결제 완료 후 운영팀 검수를 거쳐 노출됩니다.</p>
+                                </div>
+
+                                <div class="MarketplaceAdAIResult" data-ai-result hidden>
+                                    <p class="MarketplaceAdPanelEyebrow">추천 예산 분석</p>
+                                    <div class="MarketplaceAdSummaryRow">
+                                        <span>추천 예산</span>
+                                        <strong data-ai-field="predicted_budget">-</strong>
+                                    </div>
+                                    <div class="MarketplaceAdSummaryRow">
+                                        <span>예상 노출 횟수</span>
+                                        <strong data-ai-field="predicted_impression">-</strong>
+                                    </div>
+                                    <div class="MarketplaceAdSummaryRow">
+                                        <span>최소 예산</span>
+                                        <strong data-ai-field="predicted_min">-</strong>
+                                    </div>
+                                    <div class="MarketplaceAdSummaryRow">
+                                        <span>최대 예산</span>
+                                        <strong data-ai-field="predicted_max">-</strong>
+                                    </div>
                                 </div>
                             </section>
                         </div>

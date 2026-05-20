@@ -241,6 +241,7 @@
                 if (!response.ok) throw new Error("업로드 실패");
 
                 const data = await response.json();
+                console.log(data);
                 console.log("녹화 파일 업로드 완료 - meetingId:", data.meetingId);
                 showToast("녹화 파일이 저장되었습니다.");
 
@@ -277,6 +278,11 @@
         } else {
             recBtn.classList.remove("recording");
         }
+    }
+
+    // 녹화파일 요약AI 요청
+    function requestSummation() {
+
     }
 
     // REC 버튼 클릭 - 토글
@@ -347,15 +353,82 @@
     `).join("");
     }
 
-    // 참여자 버튼 클릭 이벤트
-    document.querySelector(".circle-btn")?.addEventListener("click", () => {
-        const panel = document.getElementById("participantPanel");
-        if (!panel) return;
-        panel.classList.toggle("off");
+    document.addEventListener("click", async (e) => {
+        // 참여자 버튼
+        if (e.target.closest(".circle-btn[aria-label='참여자']")) {
+            document.getElementById("participantPanel")?.classList.toggle("off");
+            return;
+        }
+
+        // 녹화 목록 버튼
+        if (e.target.closest("#summation")) {
+            const panel = document.getElementById("recordingPanel");
+            if (!panel) return;
+
+            if (panel.classList.contains("off")) {
+                await videoService.getRecords({ opponentId: partnerId }, videoLayout.recordList);
+            }
+            panel.classList.toggle("off");
+            return;
+        }
+
+        // 요약 버튼
+        const summaryBtn = e.target.closest(".summary-btn");
+        if (summaryBtn) {
+            const fileId   = summaryBtn.dataset.id;
+            const filePath = summaryBtn.dataset.filePath;
+
+            summaryModal.open();
+            try {
+                const data = await videoService.getSummary({ fileId, filePath });
+                summaryModal.render(data.content);
+            } catch {
+                summaryModal.render("## 오류\n요약 요청에 실패했습니다. 다시 시도해주세요.");
+            }
+            return;
+        }
+
+        // 패널 닫기 버튼
+        if (e.target.closest("#participantPanelClose")) {
+            document.getElementById("participantPanel")?.classList.add("off");
+            return;
+        }
+
+        if (e.target.closest("#recordingPanelClose")) {
+            document.getElementById("recordingPanel")?.classList.add("off");
+            return;
+        }
     });
 
-    // 패널 닫기 버튼
-    document.getElementById("participantPanelClose")?.addEventListener("click", () => {
-        document.getElementById("participantPanel")?.classList.add("off");
-    });
+    // 요약 모달 이벤트
+    const summaryModal = (() => {
+        const backdrop = document.getElementById("summaryBackdrop");
+        const loading  = document.getElementById("summaryLoading");
+        const content  = document.getElementById("summaryContent");
+
+        function open() {
+            backdrop.classList.add("show");
+        }
+
+        function close() {
+            backdrop.classList.remove("show");
+            content.classList.remove("show");
+            content.innerHTML = "";
+            loading.classList.remove("hidden");
+        }
+
+        function render(markdownText) {
+            loading.classList.add("hidden");
+            content.innerHTML = marked.parse(markdownText);
+            content.classList.add("show");
+        }
+
+        backdrop?.addEventListener("click", (e) => {
+            if (e.target === e.currentTarget) close();
+        });
+
+        document.getElementById("summaryModalClose")?.addEventListener("click", close);
+
+        return { open, close, render };
+    })();
 };

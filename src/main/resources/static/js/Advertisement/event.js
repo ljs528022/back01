@@ -728,9 +728,54 @@ window.onload = () => {
 
         const headerAction = event.target.closest("[data-header-action]");
         if (headerAction) {
-            openModal(headerAction.dataset.headerAction === "guide" ? "guide" : "payment");
+            const action = headerAction.dataset.headerAction;
+
+            if (action === "guide") {
+                openModal("guide");
+                return;
+            }
+
+            if (action === "payment") {
+                openModal("payment");
+                return;
+            }
+
+            if (action === "AI") {
+                const adTitle = getFormValue("adTitle");
+                const adBody  = getFormValue("adBody");
+
+                // 제목과 내용 둘 다 있어야 유사도 계산 가능
+                if (!adTitle || !adBody) {
+                    showToast("광고 제목과 내용을 먼저 입력해 주세요.");
+                    return;
+                }
+
+                const aiButton = headerAction;
+                aiButton.disabled    = true;
+                aiButton.textContent = "분석 중...";
+
+                try {
+                    await advertisementService.recommendBudget(
+                        { adTitle, adBody },
+                        (result) => {
+                            advertisementLayout.showRecommendBudget(result);
+                            syncApplySummary();
+                        }
+                    );
+                } catch (e) {
+                    console.error("[AI] 추천 예산 분석 실패:", e);
+                    showToast("AI 분석에 실패했습니다. 다시 시도해 주세요.");
+                } finally {
+                    aiButton.disabled    = false;
+                    aiButton.textContent = "추천 예산 확인";
+                }
+
+                return;
+            }
+
             return;
         }
+
 
         const modalButton = event.target.closest("[data-modal-target]");
         if (modalButton) {
