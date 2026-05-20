@@ -351,7 +351,9 @@ const layout = (() => {
         posts.forEach((post, i) => {
             html += post.newsType === 'emergency' ? createNewsCard(post) : createPostCard(post);
             if (adInterval > 0 && (i + 1) % adInterval === 0 && adIdx < adList.length) {
-                html += createAdCard(adList[adIdx++]);
+                const ad = adList[adIdx++];
+                html += createAdCard(ad);
+                service.minusImpressionCount(ad.id);
             }
         });
         if (page === 1) {

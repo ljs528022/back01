@@ -22,6 +22,18 @@
         </choose>
     </sql>
 
+    <update id="minusImpressionCount">
+        update tbl_advertisement
+        set impression_estimate = impression_estimate - 1,
+        status =
+            case
+                when impression_estimate = 1 then 'expired'
+                else status
+            end
+        where id = #{id}
+            and impression_estimate > 0
+    </update>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into tbl_advertisement (advertiser_id, title, headline, description, landing_url, budget,
                                        impression_estimate, started_at)
@@ -51,6 +63,8 @@
                 limit 1) as advertiser_profile_file_name
         from tbl_advertisement a
         join tbl_member m on a.advertiser_id = m.id
+        where a.impression_estimate > 0
+            and a.status = 'active'
         order by a.created_datetime desc
         limit #{count} offset #{offset}
     </select>
